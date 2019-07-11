@@ -2,6 +2,7 @@ import os
 import compiler
 import argparse
 import tempfile
+import type_check
 import subprocess
 
 def main():
@@ -17,14 +18,14 @@ def main():
 # pytype: disable=not-supported-yet
 from typing import *
 # pytype: enable=not-supported-yet
-''' + compiler.check_and_compile(os.path.dirname(args.file), code, main=True)
+''' + compiler.compile(os.path.dirname(args.file), args.file, code, main=True)
 
     tmpname = tempfile.mktemp(suffix='.py')
     tmp = open(tmpname, 'w')
     tmp.write(python)
     tmp.close()
 
-    if not compiler.errors:
+    if type_check.check(tmpname, python):
         pt = subprocess.run(["nuitka", tmpname,
             "--remove-output", "--python-version=3.6"],
             stdout=subprocess.PIPE)
