@@ -15,10 +15,10 @@ fn fib(i: i64) -> i64 {
 
 fn main(argc: i64, argv: list) {
     for i in 0..45 {
-        print("{} ".format(fib(i)), end="");
+        print("{} ", fib(i));
     }
 
-    print();
+    println();
 }
 ```
 the same code in C:
