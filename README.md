@@ -1,5 +1,3 @@
-# Fire
-
 <img src="https://i.imgur.com/SSYGMnA.png"/>
 
 Fire is simple, fast, statically-typed programming language.
@@ -13,12 +11,12 @@ fn fib(i: int) -> int {
     return fib(i-1) + fib(i-2);
 }
 
-fn main(argc: int, argv: list) {
+fn main(argc: i64, argv: list) {
     for i in 0..45 {
-        print("{} ".format(fib(i)), end="");
+        print("{} ", fib(i));
     }
 
-    print();
+    println("");
 }
 ```
 the same code in C:
