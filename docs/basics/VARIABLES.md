@@ -52,7 +52,7 @@ fn main(argc: int, argv: list) {
 
 ```ruby
 error: unsupported operands
- --> dist/test.fi:4
+ --> example.fi:4
   |
   |     println("{}", a + b);
   |     ^^^ unsupported operand type(s) for +: 'int' and 'str'
