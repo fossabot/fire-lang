@@ -18,7 +18,7 @@ fn main(argc: i64, argv: list) {
         print("{} ", fib(i));
     }
 
-    println();
+    println("");
 }
 ```
 the same code in C:
