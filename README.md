@@ -13,7 +13,7 @@ fn fib(i: i64) -> i64 {
     return fib(i-1) + fib(i-2);
 }
 
-fn main(argc: int, argv: list) {
+fn main(argc: i64, argv: list) {
     for i in 0..45 {
         print("{} ".format(fib(i)), end="");
     }
