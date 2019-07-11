@@ -119,7 +119,7 @@ def pygen(fpath, filename, code, toks, main) -> str:
                     out += f'if i in {fname}__: return {fname}__[i]'
                     out += '\n' + ' ' * indent
                     x = f'def __{fname}(i: int) -> int:\n'
-                    x += f' tmp = fib(i)\n'
+                    x += f' tmp = {fname}(i)\n'
                     x += f' {fname}__[i] = tmp\n'
                     x += f' return tmp\n'
                     out = x + '\n' + out
