@@ -18,6 +18,11 @@ def main():
 # pytype: disable=not-supported-yet
 from typing import *
 # pytype: enable=not-supported-yet
+__print__: Callable = print
+def print(fmt, *args):
+ return __print__(fmt.format(*args), end="")
+def println(fmt, *args):
+ return __print__(fmt.format(*args), end="\\n")
 ''' + compiler.compile(os.path.dirname(args.file), args.file, code, main=True)
 
     tmpname = tempfile.mktemp(suffix='.py')
