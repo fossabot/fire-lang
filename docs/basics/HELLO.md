@@ -8,7 +8,7 @@ Function `print` displays the given text, and `println` does the same, but addit
 The program below is "Hello, world" in the Fire language
 
 ```rust
-fn main(argc: i64, argv: list) {
+fn main(argc: int, argv: list) {
     println("Hello, world!");
 }
 ```
