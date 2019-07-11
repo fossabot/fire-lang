@@ -1,4 +1,4 @@
-# Lists and dicts
+# Lists and Dicts
 
 Lists are very similar to arrays.
 They can contain as many variables as you want.
@@ -30,8 +30,71 @@ This code will cause error:
 
 ```ruby
 error: list item 3 has incompatible type "str"; expected "int"
- --> dist/test.fi:2
+ --> example.fi:2
   |
   |     let mylist: List[int] = [1, 2, 3, "Hello"];
   |     ^^^
 ```
+
+## Dictionaries
+
+A dictionary is a data type similar to arrays,
+but works with keys and values instead of indexes.
+Access to any value stored in the dictionary
+can be obtained using a key that is any type of object
+(string, number, list, etc.) instead of
+using its index for addressing.
+
+For example:
+
+```rust
+fn main(argc: int, argv: list) {
+    let mydict = dict({
+        "a": 100,
+        "b": "Hello",
+    });
+
+    mydict["c"] = 200;
+
+    println("{}", mydict["a"]);
+    println("{}", mydict["b"]);
+    println("{}", mydict["c"]);
+}
+```
+displays:
+```
+100
+Hello
+200
+```
+
+As you probably noticed (just like with lists),
+you can assign any types to dict.
+But if you want, you can specify a type yourself.
+
+```rust
+fn main(argc: int, argv: list) {
+    let mydict: Dict[str, int] = dict({
+        "a": 100,
+        "b": "Hello",
+    });
+
+    mydict["c"] = 200;
+
+    println("{}", mydict["a"]);
+    println("{}", mydict["b"]);
+    println("{}", mydict["c"]);
+}
+```
+causes:
+```ruby
+error: dict entry 1 has incompatible type "str": "str"; expected "str": "int"
+ --> example.fi:2
+  |
+  |     let mydict: Dict[str, int] = dict({
+  |     ^^^
+```
+
+It is worth remembering that to declare a dict,
+don't just write `{}`. You must write `dict ()`
+for empty dict or `dict ({...})` as shown above.
