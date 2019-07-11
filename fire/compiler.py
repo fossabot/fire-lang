@@ -7,15 +7,14 @@ def compile(path, filename, code, main=False):
     rules = {
         'INCLUDE': r'#include\([a-zA-Z_][a-zA-Z_0-9\.]*:[a-zA-Z_][a-zA-Z_0-9]*\)',
         'IMPORT': r'use( )*([a-zA-Z_][a-zA-Z_0-9]*(::|))*;',
-        'EXPR-FOR': ' for ',
-        'EXPR-IF': ' if ',
-        'EXPR-ELSE': ' else ',
         'DICT': r'dict( )*\({|}\)',
         'STR': r'"(\\\"|\\\\|[^"\n])*?"i?',
         'ID': r'[a-zA-Z_][a-zA-Z_0-9]*'
     }
     
     rules['::'] = r'::'
+    rules['->'] = r'->'
+    rules['=='] = r'=='
 
     rules['RANGE'] = NUMBER + r'( )*\.\.( )*' + NUMBER
     rules['NUMBER'] = NUMBER

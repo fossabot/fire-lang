@@ -25,7 +25,7 @@ fn run(args: List[str], input=PIPE, output=PIPE) {
         stdin=input
     );
     let out = output.stdout;
-    ret.output = out if out == None else out.decode();
+    ret.output = (out) if (out == None) else (out.decode());
     ret.args = args;
     ret.returncode = output.returncode;
     return ret;

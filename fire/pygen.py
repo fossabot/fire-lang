@@ -30,6 +30,8 @@ def pygen(fpath, filename, code, toks, main) -> str:
     out: str = '' if main else ' ' * indent
     ln_no: int = 0
     struct: bool = False
+    last: list = []
+    opt: list = []
 
     for tok in toks:
         if tok.type == 'whitespace':
@@ -43,6 +45,8 @@ def pygen(fpath, filename, code, toks, main) -> str:
         
         # print(tok, tok.type)
 
+        last += [tok]
+
         if tok.type == 'ID':
             if tok.val in keywords:
                 if tok.val == 'struct':
@@ -53,7 +57,10 @@ def pygen(fpath, filename, code, toks, main) -> str:
             elif tok.val in pykeywords:
                 out += '_' + tok.val
             else:
-                out += tok.val
+                if tok.val in opt:
+                    out += '__' + tok.val
+                else:
+                    out += tok.val
         elif tok.type == 'INCLUDE':
             mnam = tok.val[8:].strip()[1:-1]
             if mnam == 're:find':
@@ -102,6 +109,20 @@ def pygen(fpath, filename, code, toks, main) -> str:
             indent += 1
             out += ':\n' + ' ' * indent
             out += '\n' + ' ' * indent
+            if len(last) >= 10:
+                ltt = [str(e) for e in last][-10:]
+                fname = ltt.pop(1)
+                ltt.pop(2)
+                if ltt == ['fn', '(', ':', 'i64', ')', '->', 'i64', '{']:
+                    opt += [fname]
+                    out = f'{fname}__: Dict[int, int] = dict()\n' + out
+                    out += f'if i in {fname}__: return {fname}__[i]'
+                    out += '\n' + ' ' * indent
+                    x = f'def __{fname}(i: int) -> int:\n'
+                    x += f' tmp = fib(i)\n'
+                    x += f' {fname}__[i] = tmp\n'
+                    x += f' return tmp\n'
+                    out = x + '\n' + out
             if struct:
                 out += 'def __str__(self):'
                 out += '\n' + ' ' * (indent + 1)

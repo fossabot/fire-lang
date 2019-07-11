@@ -1,9 +1,9 @@
 import subprocess
 
-p1s = []
+pps = []
 
 def check_pytype_output(python: str, out: str) -> bool:
-    global p1s
+    global pps
 
     if out.endswith('Success: no errors found\n'):
         return True
@@ -21,7 +21,10 @@ def check_pytype_output(python: str, out: str) -> bool:
                 err = True
 
                 lns = line[line.index('line') + 5:].strip()
-                ln_no = int(lns[:lns.index(',')])
+                try:
+                    ln_no = int(lns[:lns.index(',')])
+                except:
+                    ln_no = int(lns[:lns.index(':')])
                 
                 if ', in' in line:
                     e = line[line.index(', in')+4:].strip()
@@ -30,10 +33,12 @@ def check_pytype_output(python: str, out: str) -> bool:
                 
                 e = e[e.index(':')+1:].strip()
                 if '[' in e:
-                    p1 = e[e.index('[')+1:-1].strip().replace('-', ' ')
-                    p2 = e[:e.index('[')].strip()
+                    p1 = e[e.rindex('[')+1:-1].strip().replace('-', ' ')
+                    p2 = e[:e.rindex('[')].strip()
                 
-                p1s += [p1]
+                p1 = p1.replace('python', '').strip()
+
+                pps += [p1, p2]
 
                 note = True
                 lerr = False
@@ -92,7 +97,7 @@ def check_mypy_output(python: str, out: str) -> bool:
                         p2 = ''
 
                     br = False
-                    for e in p1s:
+                    for e in pps:
                         if e in p1 or e[-1] in p1:
                             br = True
                     if br: break
