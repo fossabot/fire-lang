@@ -4,7 +4,7 @@
 
 Fire is simple, fast, statically-typed programming language.
 
-## Faster than c
+## Faster than C
 ```rust
 fn fib(i: i64) -> i64 {
     if i < 2 {
@@ -21,7 +21,7 @@ fn main(argc: int, argv: list) {
     print();
 }
 ```
-The same code in C:
+the same code in C:
 ```c
 #include <stdio.h>
 
