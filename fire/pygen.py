@@ -20,8 +20,7 @@ keywords = {
     'break': 'break',
     'in': ' in',
     'for': 'for',
-    'struct': 'class',
-    'i64': 'int',
+    'struct': 'class'
 }
 
 def pygen(fpath, filename, code, toks, main) -> str:
@@ -113,7 +112,7 @@ def pygen(fpath, filename, code, toks, main) -> str:
                 ltt = [str(e) for e in last][-10:]
                 fname = ltt.pop(1)
                 ltt.pop(2)
-                if ltt == ['fn', '(', ':', 'i64', ')', '->', 'i64', '{']:
+                if ltt == ['fn', '(', ':', 'int', ')', '->', 'int', '{']:
                     opt += [fname]
                     out = f'{fname}__: Dict[int, int] = dict()\n' + out
                     out += f'if i in {fname}__: return {fname}__[i]'

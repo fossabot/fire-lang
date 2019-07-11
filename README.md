@@ -6,7 +6,7 @@ Fire is simple, fast, statically-typed programming language.
 
 ## Faster than C
 ```rust
-fn fib(i: i64) -> i64 {
+fn fib(i: int) -> int {
     if i < 2 {
         return 1;
     }
