@@ -1,3 +1,5 @@
+# Hello, world!
+
 Fire is a simple language and has a very simple syntax. Each program contains the `main` function as in C.
 
 There are two functions used to print: `print` and` println`.
