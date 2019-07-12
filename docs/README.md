@@ -6,3 +6,4 @@ Fire is simple, fast, statically-typed programming language.
 - **[Hello, world!](https://maviek.github.io/fire-lang/basics/HELLO)**
 - **[Variables and Types](https://maviek.github.io/fire-lang/basics/VARIABLES)**
 - **[Lists and Dicts](https://maviek.github.io/fire-lang/basics/LISTS)**
+- **[Conditions](https://maviek.github.io/fire-lang/basics/CONDITIONS)**
