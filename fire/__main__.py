@@ -1,4 +1,5 @@
 import os
+import shutil
 import compiler
 import argparse
 import tempfile
@@ -31,12 +32,16 @@ def println(fmt, *args):
     tmp.close()
 
     if type_check.check(tmpname, python):
-        pt = subprocess.run(["nuitka", tmpname,
+        pt = subprocess.run(["nuitka", tmpname, "--standalone",
             "--remove-output", "--python-version=3.6"],
             stdout=subprocess.PIPE)
-        os.rename(os.path.splitext
-            (os.path.basename(tmpname))[0] + '.exe',
+        x = os.path.splitext(os.path.basename(tmpname))[0]
+        try:
+            os.rename(f'{x}.dist/{x}.exe',
             os.path.splitext(os.path.basename(args.file))[0])
+            shutil.rmtree(x + '.dist')
+        except:
+            pass
     else:
         pass
 

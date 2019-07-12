@@ -5,6 +5,7 @@ def compile(path, filename, code, main=False):
     NUMBER = r'((0x[0-9A-F]+)|([0-9]+))'
 
     rules = {
+        'ELSE-IF': r'else( )+if',
         'INCLUDE': r'#include\([a-zA-Z_][a-zA-Z_0-9\.]*:[a-zA-Z_][a-zA-Z_0-9]*\)',
         'IMPORT': r'use( )*([a-zA-Z_][a-zA-Z_0-9]*(::|))*;',
         'DICT': r'dict( )*\({|}\)',

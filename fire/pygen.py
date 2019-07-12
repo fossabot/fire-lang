@@ -60,6 +60,8 @@ def pygen(fpath, filename, code, toks, main) -> str:
                     out += '__' + tok.val
                 else:
                     out += tok.val
+        elif tok.type == 'ELSE-IF':
+            out += 'elif '
         elif tok.type == 'INCLUDE':
             mnam = tok.val[8:].strip()[1:-1]
             if mnam == 're:find':
