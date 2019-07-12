@@ -17,7 +17,7 @@ def compile(path, filename, code, main=False):
     rules['->'] = r'->'
     rules['=='] = r'=='
 
-    rules['RANGE'] = NUMBER + r'( )*\.\.( )*' + NUMBER
+    rules['RANGE'] = NUMBER + r'( )*\.\.( )*' + NUMBER + r'|(\(.*\.\..*\))'
     rules['NUMBER'] = NUMBER
 
     for i in '@{<([])>}+-*/%;:.,=!':

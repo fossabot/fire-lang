@@ -89,6 +89,8 @@ def pygen(fpath, filename, code, toks, main) -> str:
                 f.close()
                 out += '\n' + compiler.compile(ipath, ipath + mod, mcode) + '\n'
         elif tok.type == 'RANGE':
+            if tok.val.startswith('(') and tok.val.endswith(')'):
+                tok.val = tok.val[1:-1]
             a, b = tok.val.split('..')
             out += f'list(range({a}, {b}))'
         elif tok.type == 'DICT':
