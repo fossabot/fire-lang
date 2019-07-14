@@ -71,6 +71,10 @@ def pygen(fpath, filename, code, toks, main) -> str:
             elif tok.val in keywords:
                 if tok.val == 'struct':
                     struct = True
+                    j = 0
+                    while toks[i+j].val.strip() != '': j += 1
+                    structname = toks[i+j+1].val
+                    out += '\n' + ' ' * indent
                 out += keywords[tok.val] + ' '
             elif tok.val == 'let':
                 pass
@@ -167,12 +171,14 @@ def pygen(fpath, filename, code, toks, main) -> str:
                 out += 'return ret[:-2] + " }"'
                 out += '\n' + ' ' * indent
         elif tok.val == '}':
-            if impl > 1:
+            if impl >= 1:
                 impl -= 1
-            if impl == 1:
-                pos = implout.index(f'class {implname}:') + len(f'class {implname}:')
-                out = implout[:pos] + '\n' + out + '\n' + implout[pos:]
-                impl = 0
+            if impl == 0:
+                try:
+                    pos = implout.index(f'class {implname}:') + len(f'class {implname}:')
+                    out = implout[:pos] + '\n' + out + '\n' + implout[pos:]
+                except:
+                    pass
             if struct:
                 struct = False
             out += '\n' + ' ' * indent

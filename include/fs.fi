@@ -1,0 +1,12 @@
+fn read_to_str(filename: str) -> str {
+    let file = open(filename, "r");
+    let data = file.read();
+    file.close();
+    return data;
+}
+
+fn write_to_file(filename: str, data: str) {
+    let file = open(filename, "w");
+    file.write(data);
+    file.close();
+}

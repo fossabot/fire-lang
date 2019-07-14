@@ -22,8 +22,6 @@ class Lexer(object):
             idx += 1
 
         self.regex = re.compile('|'.join(regex_parts))
-        self.skip_whitespace = skip_whitespace
-        self.re_ws_skip = re.compile('\S')
 
     def input(self, buf):
         self.buf = buf
@@ -33,14 +31,6 @@ class Lexer(object):
         if self.pos >= len(self.buf):
             return None
         else:
-            if self.skip_whitespace:
-                m = self.re_ws_skip.search(self.buf, self.pos)
-
-                if m:
-                    self.pos = m.start()
-                else:
-                    return None
-
             m = self.regex.match(self.buf, self.pos)
             if m:
                 groupname = m.lastgroup
@@ -49,7 +39,7 @@ class Lexer(object):
                 self.pos = m.end()
                 return tok
 
-            raise Exception(f"invalid syntax at {self.pos}")
+            raise Exception(f"invalid syntax at {self.pos}, {self.buf[self.pos]}")
 
     def tokens(self):
         while 1:

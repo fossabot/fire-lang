@@ -5,12 +5,11 @@ struct CliBuilder {
 }
 
 impl CliBuilder {
-    fn __init__(self, description: str) -> SelfType {
+    fn __init__(self, description: str) {
         self.parser = ArgumentParser(description=description);
-        return self;
     }
     
-    fn arg(self, arg: str, help: str = "") -> SelfType {
+    fn arg(self, arg: str, help: str = "") -> "CliBuilder" {
         self.parser.add_argument(arg, metavar=arg, type=str, help=help);
         return self;
     }
