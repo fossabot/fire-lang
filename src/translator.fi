@@ -187,6 +187,7 @@ fn translate(fpath: str, filename: str, code: str, toks: List[Token], main: bool
                 if implcx in implout {
                     let pos = implout.index(implcx) + len(implcx);
                     out = implout[:pos] + "\n" + out + "\n" + implout[pos:];
+                    implout = "";
                 }
             }
             if struct_ {
