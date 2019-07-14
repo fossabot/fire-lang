@@ -3,7 +3,6 @@
 #include(re:search)
 #include(re:sub)
 #include(re:subn)
-#include(re:split)
 #include(re:findall)
 #include(re:finditer)
 #include(re:purge)
