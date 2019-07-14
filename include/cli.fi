@@ -1,0 +1,21 @@
+#include(argparse:ArgumentParser)
+
+struct CliBuilder {
+    parser: ArgumentParser
+}
+
+impl CliBuilder {
+    fn __init__(self, description: str) -> SelfType {
+        self.parser = ArgumentParser(description=description);
+        return self;
+    }
+    
+    fn arg(self, arg: str, help: str = "") -> SelfType {
+        self.parser.add_argument(arg, metavar=arg, type=str, help=help);
+        return self;
+    }
+
+    fn bulid(self) {
+        return self.parser.parse_args();
+    }
+}

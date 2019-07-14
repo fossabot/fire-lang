@@ -1,0 +1,5 @@
+use cli;
+
+fn main(argc: int, argv: list) {
+    let args = CliBuilder("fire-lang compiler.").arg("file", help="source file").bulid();
+}

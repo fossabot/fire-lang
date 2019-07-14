@@ -24,15 +24,18 @@ keywords = {
 }
 
 def pygen(fpath, filename, code, toks, main) -> str:
-    global errors
     indent: int = 0
     out: str = '' if main else ' ' * indent
     ln_no: int = 0
     struct: bool = False
     last: list = []
     opt: list = []
+    impl: int = 0
+    implname: str = ''
+    implout: str = ''
+    implskip: bool = False
 
-    for tok in toks:
+    for i, tok in enumerate(toks):
         if tok.type == 'whitespace':
             continue
         
@@ -44,10 +47,28 @@ def pygen(fpath, filename, code, toks, main) -> str:
         
         # print(tok, tok.type)
 
+        if implskip and tok.val == '{':
+            implskip = False
+            indent += 1
+            out += '\n' + ' ' * indent
+            continue
+
+        if implskip:
+            continue
+
         last += [tok]
 
         if tok.type == 'ID':
-            if tok.val in keywords:
+            if tok.val == 'impl':
+                impl += 1
+                implout = out
+                implskip = True
+                j = 0
+                while toks[i+j].val.strip() != '': j += 1
+                implname = toks[i+j+1].val
+                out = ''
+                continue
+            elif tok.val in keywords:
                 if tok.val == 'struct':
                     struct = True
                 out += keywords[tok.val] + ' '
@@ -110,7 +131,7 @@ def pygen(fpath, filename, code, toks, main) -> str:
                 out += ';pass\n' + ' ' * indent
         elif tok.val == '{':
             indent += 1
-            out += ':\n' + ' ' * indent
+            out += ':\n' + ' ' * indent + 'pass'
             out += '\n' + ' ' * indent
             if len(last) >= 10:
                 ltt = [str(e) for e in last][-10:]
@@ -126,6 +147,8 @@ def pygen(fpath, filename, code, toks, main) -> str:
                     x += f' {fname}__[i] = tmp\n'
                     x += f' return tmp\n'
                     out = x + '\n' + out
+            if impl >= 1:
+                impl += 1
             if struct:
                 out += 'def __str__(self):'
                 out += '\n' + ' ' * (indent + 1)
@@ -144,10 +167,16 @@ def pygen(fpath, filename, code, toks, main) -> str:
                 out += 'return ret[:-2] + " }"'
                 out += '\n' + ' ' * indent
         elif tok.val == '}':
+            if impl > 1:
+                impl -= 1
+            if impl == 1:
+                pos = implout.index(f'class {implname}:') + len(f'class {implname}:')
+                out = implout[:pos] + '\n' + out + '\n' + implout[pos:]
+                impl = 0
             if struct:
                 struct = False
+            out += '\n' + ' ' * indent
             indent -= 1
-            out += 'pass\n' + ' ' * indent
         elif tok.val == '::':
             out += '.'
         else:

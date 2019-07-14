@@ -42,6 +42,7 @@ def check_pytype_output(python: str, out: str) -> bool:
 
                 note = True
                 lerr = False
+                serr = False
 
                 for i, ln in enumerate(python.splitlines()):
                     if i == ln_no - 1:
@@ -55,7 +56,11 @@ def check_pytype_output(python: str, out: str) -> bool:
                         print(f'\033[34;1;1m  |\033[0m    {ln}')
                         print(f'\033[34;1;1m  |\033[0m     \033[31;1;1m^^^ {p2}\033[0m')
                         print(end='\033[34;1;1m  |\033[0m\n')
+                        serr = True
                         break
+                
+                if not serr:
+                    print(f'\n\033[31;1;1merror\033[0m: {p1}: \033[31;1;1m{p2}\033[0m')
 
             elif err:
                 if note:
@@ -67,7 +72,7 @@ def check_pytype_output(python: str, out: str) -> bool:
         return False
 
 def check_mypy_output(python: str, out: str) -> bool:
-    
+
     if out == '':
         return True
     

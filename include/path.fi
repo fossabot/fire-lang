@@ -36,3 +36,4 @@
 #include(os.path:supports_unicode_filenames)
 #include(os.path:relpath)
 #include(os.path:commonpath)
+#include(shutil:rmtree)
