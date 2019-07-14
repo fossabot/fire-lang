@@ -32,16 +32,17 @@ def println(fmt, *args):
     tmp.close()
 
     if type_check.check(tmpname, python):
-        pt = subprocess.run(["nuitka", tmpname, "--standalone",
-            "--remove-output", "--python-version=3.6"],
-            stdout=subprocess.PIPE)
-        x = os.path.splitext(os.path.basename(tmpname))[0]
         try:
-            os.rename(f'{x}.dist/{x}.exe',
-            os.path.splitext(os.path.basename(args.file))[0])
-            shutil.rmtree(x + '.dist')
+            shutil.rmtree('build')
         except:
             pass
+        output = os.path.splitext(os.path.basename(args.file))[0]
+        pyio = os.path.splitext(os.path.basename(tmpname))[0]
+        subprocess.run(["pyinstaller", "-F", "--specpath=build/specfile", "--distpath=build/bin/", tmpname],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        os.rename(f'build/{pyio}', f'build/{output}')
+        os.rename(f'build/bin/{pyio}', f'build/bin/{output}')
+        shutil.rmtree('build/specfile')
     else:
         pass
 
