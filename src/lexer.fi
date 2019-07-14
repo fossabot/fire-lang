@@ -61,6 +61,7 @@ fn lex(code: str) -> List[Token] {
     rules["::"] = "::";
     rules["->"] = "->";
     rules["=="] = "==";
+    rules["AND-OR"] = "&&|\|\|";
 
     rules["RANGE"] = NUMBER + "( )*\.\.( )*" + NUMBER + "|(\(.*\.\..*\))";
     rules["NUMBER"] = NUMBER;

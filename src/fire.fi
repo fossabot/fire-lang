@@ -1,6 +1,8 @@
+use path;
 use lexer;
 use cli;
 use fs;
+use translator;
 
 fn main(argc: int, argv: list) {
     let args = (CliBuilder("fire-lang compiler.")
@@ -9,7 +11,7 @@ fn main(argc: int, argv: list) {
     
     let code = read_to_str(args.file);
     let python = "# pytype: disable=not-supported-yet\nfrom typing import *\n# pytype: enable=not-supported-yet\n__print__: Callable = print\ndef print(fmt, *args):\n return __print__(fmt.format(*args), end='')\ndef println(fmt, *args):\n return __print__(fmt.format(*args), end='\\n')\n"
-    let tokens = lex(code);
+    python += translate(dirname(args.file), args.file, code, lex(code), bool(1));
 
-    for t in tokens { println("{}", t); }
+    println("{}", python);
 }
