@@ -1,3 +1,0 @@
-mypy
-pytype
-pyinstaller
