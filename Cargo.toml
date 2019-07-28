@@ -1,9 +1,8 @@
 [package]
-name = "fire-lang"
+name = "fire"
 version = "0.1.0"
-authors = ["maviek <mavioko7@gmail.com>"]
+authors = ["maviek"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+clap = "2.33.0"
