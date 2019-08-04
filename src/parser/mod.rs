@@ -21,7 +21,7 @@ impl Parser {
 
         let lines = src.lines()
             .map(|s| s.to_string())
-            .collect::<Vec<String>>();
+            .collect();
 
         Parser {
             lines,
