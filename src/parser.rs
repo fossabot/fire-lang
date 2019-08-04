@@ -11,17 +11,24 @@ pub fn parse(tokens: Vec<Token>) -> String {
     while i < tokens.len() {
         let mut tok = &tokens[i];
 
+        /* Convert fire function to C
+         * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
+         * =>
+         * `RetType __fire_FuncName(Type arg1, Type arg2)`
+         */
         if tok.ttype == "Fn" {
             i += 1;
             tok = &tokens[i];
 
             let fname = format!("__fire_{}", tok.value);
 
+            /* after `fn` the function name is required */
             if tok.ttype != "Name" {
                 error("invalid syntax", "expected name");
             }
 
-            let ftype = "void".to_string();
+            /* default return type: void */
+            let mut ftype = "void".to_string();
 
             i += 1;
             tok = &tokens[i];
@@ -56,6 +63,11 @@ pub fn parse(tokens: Vec<Token>) -> String {
                 }
 
                 atype = !atype;
+            }
+
+            if &tokens[i+1].ttype == "Arrow" {
+                i += 2; // skip `->` and get type
+                ftype = tokens[i].value.clone();
             }
 
             output = format!("{}\n{} {}({})", output, ftype, fname, args);

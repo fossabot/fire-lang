@@ -5,6 +5,7 @@ enum FireLexer {
     #[end] End,
     #[error] Error,
     #[regex = "\\{|\\}|\\(|\\)|\\[|\\]|\\+|-|\\*|/|%"] Literals,
+    #[regex = "->"] Arrow,
     #[regex = "\\d+"] Number,
     #[regex = "\"(\\\\\"|[^\"])*\""] String,
     #[regex = "[_a-zA-Z][_a-zA-Z0-9]*"] Name,
