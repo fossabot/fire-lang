@@ -8,6 +8,8 @@ struct Parser {
     filename: String,
     lines: Vec<String>,
     tokens: Vec<Token>,
+    token: Token,
+    token_i: usize,
     errors: usize,
     line: usize
 }
@@ -25,95 +27,107 @@ impl Parser {
 
         Parser {
             lines,
-            filename: filename,
+            filename,
             tokens: lex(src),
+            token: Token {
+                ttype: "".to_string(),
+                value: "".to_string()
+            },
+            token_i: 0,
             errors: 0,
             line: 0
         }
     }
 
+    fn next(&mut self) {
+        self.token_i += 1;
+        let token = &self.tokens[self.token_i-1];
+        self.token = Token {
+            value: token.value.clone(),
+            ttype: token.ttype.clone()
+        };
+    }
+
+    fn function(&mut self) -> String {
+        let mut output = String::new();
+        output
+    }
+
     fn parse(&mut self) -> String {
         let mut output = String::new();
-        let mut i = 0;
 
-        while i < self.tokens.len() {
-            let mut tok = &self.tokens[i];
+        while self.token_i < self.tokens.len() {
+            self.next();
 
             /* Convert fire function to C
-            * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
-            * =>
-            * `RetType __fire_FuncName(Type arg1, Type arg2)`
-            */
-            if tok.ttype == "Fn" {
-                i += 1;
-                tok = &self.tokens[i];
-
-                let fname = format!("__fire_{}", tok.value);
+             * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
+             * =>
+             * `RetType __fire_FuncName(Type arg1, Type arg2)`
+             */
+            if self.token.ttype == "Fn" {
+                self.next();
+                let fname = format!("__fire_{}", self.token.value);
 
                 /* after `fn` the function name is required */
-                if tok.ttype != "Name" {
+                if self.token.ttype != "Name" {
                     self.errors += 1;
                     self.error("invalid syntax", "expected name");
                 }
 
                 /* default return type: void */
                 let mut ftype = "void".to_string();
+                self.next();
 
-                i += 1;
-                tok = &self.tokens[i];
-
-                if tok.value != "(" {
+                if self.token.value != "(" {
                     self.errors += 1;
                     self.error("invalid syntax", "expected `(` after function name");
                 }
 
                 /* args -> output string with arguments in C style
-                * aname -> current argument name
-                * atype -> type flag, used to check if token is type or argument name
-                */
+                 * aname -> current argument name
+                 * atype -> type flag, used to check if token is type or argument name
+                 */
                 let mut args = String::new();
                 let mut aname = String::new();
                 let mut atype = false;
 
-                while tok.value != ")" {
-                    i += 1;
-                    tok = &self.tokens[i];
+                while self.token.value != ")" {
+                    self.next();
 
-                    if tok.value == ":" || tok.value == "," {
-                        if tok.value == "," {
+                    if self.token.value == ":" || self.token.value == "," {
+                        if self.token.value == "," {
                             args = format!("{},", args);
                         }
                         continue;
                     }
 
                     if atype {
-                        args = format!("{}{} {}", args, tok.value, aname);
+                        args = format!("{}{} {}", args, self.token.value, aname);
                     } else {
-                        aname = format!("__fire_{}", tok.value);
+                        aname = format!("__fire_{}", self.token.value);
                     }
 
                     atype = !atype;
                 }
 
-                if &self.tokens[i+1].ttype == "Arrow" {
-                    i += 2; // skip `->` and get type
-                    ftype = self.tokens[i].value.clone();
+                if &self.tokens[self.token_i+1].ttype == "Arrow" {
+                    self.next(); // point to arrow
+                    self.next(); // skip `->` and get type
+                    ftype = self.token.value.clone();
                 }
 
                 output = format!("{}\n{} {}({})", output, ftype, fname, args);
             }
 
-            else if tok.ttype == "Newline" {
+            else if self.token.ttype == "Newline" {
                 let line = &self.lines[self.line];
                 self.line += 1;
                 output = format!("{}\n//{}:{}@{}\n", output, self.filename, self.line, line);
             }
 
-            else if tok.ttype == "Literals" {
-                output = format!("{}{}", output, tok.value);
+            else if self.token.ttype == "Literals" {
+                output = format!("{}{}", output, self.token.value);
             }
-
-            i += 1;
         }
 
         output
