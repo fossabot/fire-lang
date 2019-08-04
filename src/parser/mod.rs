@@ -175,7 +175,7 @@ impl Parser {
     }
 
     fn parse(&mut self) -> String {
-        let mut output = String::new();
+        let mut output = "#define c_str const char*".to_string();
 
         while self.token_i < self.tokens.len() {
             self.next();
