@@ -53,6 +53,14 @@ impl Parser {
         output
     }
 
+    fn see(&self, s: &str) -> bool {
+        self.token.ttype == s.to_string()
+    }
+
+    fn see_value(&self, s: &str) -> bool {
+        self.token.value == s.to_string()
+    }
+
     fn parse(&mut self) -> String {
         let mut output = String::new();
 
@@ -64,12 +72,12 @@ impl Parser {
              * =>
              * `RetType __fire_FuncName(Type arg1, Type arg2)`
              */
-            if self.token.ttype == "Fn" {
+            if self.see("Fn") {
                 self.next();
                 let fname = format!("__fire_{}", self.token.value);
 
                 /* after `fn` the function name is required */
-                if self.token.ttype != "Name" {
+                if !self.see("Name") {
                     self.errors += 1;
                     self.error("invalid syntax", "expected name");
                 }
@@ -78,7 +86,7 @@ impl Parser {
                 let mut ftype = "void".to_string();
                 self.next();
 
-                if self.token.value != "(" {
+                if !self.see_value("(") {
                     self.errors += 1;
                     self.error("invalid syntax", "expected `(` after function name");
                 }
@@ -91,11 +99,11 @@ impl Parser {
                 let mut aname = String::new();
                 let mut atype = false;
 
-                while self.token.value != ")" {
+                while !self.see_value(")") {
                     self.next();
 
-                    if self.token.value == ":" || self.token.value == "," {
-                        if self.token.value == "," {
+                    if self.see_value(":") || self.see_value(",") {
+                        if self.see_value(",") {
                             args = format!("{},", args);
                         }
                         continue;
@@ -119,13 +127,13 @@ impl Parser {
                 output = format!("{}\n{} {}({})", output, ftype, fname, args);
             }
 
-            else if self.token.ttype == "Newline" {
+            else if self.see("Newline") {
                 let line = &self.lines[self.line];
                 self.line += 1;
                 output = format!("{}\n//{}:{}@{}\n", output, self.filename, self.line, line);
             }
 
-            else if self.token.ttype == "Literals" {
+            else if self.see("Literals") {
                 output = format!("{}{}", output, self.token.value);
             }
         }
@@ -135,7 +143,7 @@ impl Parser {
 
     // TODO: pretty displaying of errors
     fn error<'a>(&self, t: &'a str, e: &'a str) {
-        panic!("{}:{}: {}", self.filename, t, e);
+        panic!("{}: {}: {}", self.filename, t, e);
     }
 }
 
