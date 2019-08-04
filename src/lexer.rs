@@ -1,5 +1,5 @@
 use logos::Logos;
- 
+
 #[derive(Logos, Debug, PartialEq)]
 enum FireLexer {
     #[end] End,
@@ -28,29 +28,29 @@ enum FireLexer {
     #[token = "use"] Use,
     #[token = "while"] While
 }
- 
+
 #[derive(Debug)]
 pub struct Token {
     pub value: String,
     pub ttype: String
 }
- 
+
 pub fn lex(code: String) -> Vec<Token> {
     let mut lexer = FireLexer::lexer(code.as_str());
     let mut tokens = Vec::new();
- 
+
     loop {
         if lexer.token == FireLexer::End {
             break;
         }
- 
+
         tokens.push(Token {
             value: lexer.slice().to_string(),
             ttype: format!("{:?}", lexer.token)
         });
- 
+
         lexer.advance();
     }
- 
+
     tokens
 }

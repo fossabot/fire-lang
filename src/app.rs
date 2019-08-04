@@ -21,7 +21,7 @@ impl Args {
                 .takes_value(true)
                 .help("Output path"))
             .get_matches();
-        
+
         Args {
             file: matches.value_of("FILE").unwrap().to_string(),
             output: matches.value_of("OUTPUT").unwrap_or("a").to_string(),
