@@ -12,5 +12,6 @@ fn main() {
     };
 
     let tokens = lexer::lex(src);
-    parser::parse(tokens);
+    let output = parser::parse(tokens);
+    println!("{}", output);
 }
