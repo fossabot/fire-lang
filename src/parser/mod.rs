@@ -49,8 +49,63 @@ impl Parser {
     }
 
     fn function(&mut self) -> String {
-        let mut output = String::new();
-        output
+        /* Convert fire function to C
+         * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
+         * =>
+         * `RetType __fire_FuncName(Type arg1, Type arg2)`
+         */
+        self.next();
+        let fname = format!("__fire_{}", self.token.value);
+
+        /* after `fn` the function name is required */
+        if !self.see("Name") {
+            self.errors += 1;
+            self.error("invalid syntax", "expected name");
+        }
+
+        /* default return type: void */
+        let mut ftype = "void".to_string();
+        self.next();
+
+        if !self.see_value("(") {
+            self.errors += 1;
+            self.error("invalid syntax", "expected `(` after function name");
+        }
+
+        /* args -> output string with arguments in C style
+         * aname -> current argument name
+         * atype -> type flag, used to check if token is type or argument name
+         */
+        let mut args = String::new();
+        let mut aname = String::new();
+        let mut atype = false;
+
+        while !self.see_value(")") {
+            self.next();
+
+            if self.see_value(":") || self.see_value(",") {
+                if self.see_value(",") {
+                    args = format!("{},", args);
+                }
+                continue;
+            }
+
+            if atype {
+                args = format!("{}{} {}", args, self.token.value, aname);
+            } else {
+                aname = format!("__fire_{}", self.token.value);
+            }
+
+            atype = !atype;
+        }
+
+        if &self.tokens[self.token_i+1].ttype == "Arrow" {
+            self.next(); // point to arrow
+            self.next(); // skip `->` and get type
+            ftype = self.token.value.clone();
+        }
+
+        format!("{} {}({})", ftype, fname, args)
     }
 
     fn see(&self, s: &str) -> bool {
@@ -67,64 +122,8 @@ impl Parser {
         while self.token_i < self.tokens.len() {
             self.next();
 
-            /* Convert fire function to C
-             * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
-             * =>
-             * `RetType __fire_FuncName(Type arg1, Type arg2)`
-             */
             if self.see("Fn") {
-                self.next();
-                let fname = format!("__fire_{}", self.token.value);
-
-                /* after `fn` the function name is required */
-                if !self.see("Name") {
-                    self.errors += 1;
-                    self.error("invalid syntax", "expected name");
-                }
-
-                /* default return type: void */
-                let mut ftype = "void".to_string();
-                self.next();
-
-                if !self.see_value("(") {
-                    self.errors += 1;
-                    self.error("invalid syntax", "expected `(` after function name");
-                }
-
-                /* args -> output string with arguments in C style
-                 * aname -> current argument name
-                 * atype -> type flag, used to check if token is type or argument name
-                 */
-                let mut args = String::new();
-                let mut aname = String::new();
-                let mut atype = false;
-
-                while !self.see_value(")") {
-                    self.next();
-
-                    if self.see_value(":") || self.see_value(",") {
-                        if self.see_value(",") {
-                            args = format!("{},", args);
-                        }
-                        continue;
-                    }
-
-                    if atype {
-                        args = format!("{}{} {}", args, self.token.value, aname);
-                    } else {
-                        aname = format!("__fire_{}", self.token.value);
-                    }
-
-                    atype = !atype;
-                }
-
-                if &self.tokens[self.token_i+1].ttype == "Arrow" {
-                    self.next(); // point to arrow
-                    self.next(); // skip `->` and get type
-                    ftype = self.token.value.clone();
-                }
-
-                output = format!("{}\n{} {}({})", output, ftype, fname, args);
+                output = format!("{}\n{}", output, self.function());
             }
 
             else if self.see("Newline") {
