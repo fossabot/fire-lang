@@ -108,6 +108,58 @@ impl Parser {
         format!("{} {}({})", ftype, fname, args)
     }
 
+    fn variable(&mut self) -> String {
+        /* Convert fire variable to C
+         * `let var: Type = ...`
+         * =>
+         * `const Type var = ...`
+         *
+         * `let mut var: Type = ...`
+         * =>
+         * `Type var = ...`
+         */
+        self.next();
+        let name = self.token.value.clone();
+        let mut var_type = None;
+
+        /* after `let` the variable name is required */
+        if !self.see("Name") {
+            self.errors += 1;
+            self.error("invalid syntax", "expected name");
+        }
+
+        self.next();
+        if self.see_value(":") {
+            self.next();
+            var_type = Some(self.token.value.clone());
+
+            /* after `:` the type name is required */
+            if !self.see("Name") {
+                self.errors += 1;
+                self.error("invalid syntax", "expected type");
+            }
+        } else if !self.see_value("=") {
+            self.error("invalid syntax", format!("unexpected {:?}", self.token).as_ref());
+            self.errors += 1;
+        }
+
+        /* if type is not specified, we must deduce it from the value */
+        if var_type == None {
+            let token = &self.tokens[self.token_i];
+            self.token_i -= 1;
+            if token.ttype == "Int".to_string() {
+                var_type = Some("long".to_string());
+            } else if token.ttype == "String".to_string() {
+                var_type = Some("char*".to_string());
+            } else {
+                self.error("unrecognized type", format!("cannot determine a type of variable `{}`", name).as_ref());
+                self.errors += 1;
+            }
+        }
+
+        format!("{} __fire_{}", var_type.unwrap_or("_".to_string()), name)
+    }
+
     fn see(&self, s: &str) -> bool {
         self.token.ttype == s.to_string()
     }
@@ -126,13 +178,17 @@ impl Parser {
                 output = format!("{}\n{}", output, self.function());
             }
 
+            else if self.see("Let") {
+                output = format!("{}\n{}", output, self.variable());
+            }
+
             else if self.see("Newline") {
                 let line = &self.lines[self.line];
                 self.line += 1;
                 output = format!("{}\n//{}:{}@{}\n", output, self.filename, self.line, line);
             }
 
-            else if self.see("Literals") {
+            else {
                 output = format!("{}{}", output, self.token.value);
             }
         }
