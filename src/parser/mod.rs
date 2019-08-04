@@ -2,6 +2,7 @@ mod lexer;
 
 use lexer::{Token, lex};
 use std::fs::read_to_string;
+use std::process::exit;
 
 struct Parser {
     filename: String,
@@ -112,5 +113,9 @@ impl Parser {
 
 pub fn compile(filename: String) -> String {
     let mut parser = Parser::new(filename);
-    parser.parse()
+    let output = parser.parse();
+    if parser.errors != 0 {
+        exit(parser.errors as i32);
+    }
+    output
 }
