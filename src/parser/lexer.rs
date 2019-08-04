@@ -7,7 +7,7 @@ enum FireLexer {
     #[token = "\n"] Newline,
     #[regex = "\\{|\\}|\\(|\\)|\\[|\\]|\\+|-|\\*|/|%"] Literals,
     #[regex = "->"] Arrow,
-    #[regex = "\\d+"] Number,
+    #[regex = "\\d+"] Int,
     #[regex = "\"(\\\\\"|[^\"])*\""] String,
     #[regex = "[_a-zA-Z][_a-zA-Z0-9]*"] Name,
     #[token = "break"] Break,
