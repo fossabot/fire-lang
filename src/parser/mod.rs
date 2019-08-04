@@ -48,14 +48,14 @@ impl Parser {
         };
     }
 
-    fn function(&mut self) -> String {
+    fn function(&mut self, extern_function: bool) -> String {
         /* Convert fire function to C
          * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
          * =>
          * `RetType __fire_FuncName(Type arg1, Type arg2)`
          */
         self.next();
-        let fname = format!("__fire_{}", self.token.value);
+        let fname = format!("{}{}", if !extern_function { "__fire_" } else { "" }, self.token.value);
 
         /* after `fn` the function name is required */
         if !self.see("Name") {
@@ -82,6 +82,12 @@ impl Parser {
 
         while !self.see_value(")") {
             self.next();
+
+            if self.see_value("...") {
+                args = format!("{}...", args);
+                self.next();
+                break;
+            }
 
             if self.see_value(":") || self.see_value(",") {
                 if self.see_value(",") {
@@ -175,7 +181,12 @@ impl Parser {
             self.next();
 
             if self.see("Fn") {
-                output = format!("{}\n{}", output, self.function());
+                output = format!("{}\n{}", output, self.function(false));
+            }
+
+            else if self.see("Extern") {
+                self.next();
+                output = format!("{}\n{}", output, self.function(true));
             }
 
             else if self.see("Let") {
