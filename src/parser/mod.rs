@@ -6,8 +6,10 @@ use std::process::exit;
 
 struct Parser {
     filename: String,
+    lines: Vec<String>,
     tokens: Vec<Token>,
-    errors: usize
+    errors: usize,
+    line: usize
 }
 
 impl Parser {
@@ -17,10 +19,16 @@ impl Parser {
             Ok(s) => s,
         };
 
+        let lines = src.lines()
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>();
+
         Parser {
+            lines,
             filename: filename,
             tokens: lex(src),
-            errors: 0
+            errors: 0,
+            line: 0
         }
     }
 
@@ -93,6 +101,12 @@ impl Parser {
                 }
 
                 output = format!("{}\n{} {}({})", output, ftype, fname, args);
+            }
+
+            else if tok.ttype == "Newline" {
+                let line = &self.lines[self.line];
+                self.line += 1;
+                output = format!("{}\n//{}:{}@{}\n", output, self.filename, self.line, line);
             }
 
             else if tok.ttype == "Literals" {
