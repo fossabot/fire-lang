@@ -173,8 +173,11 @@ impl Parser {
             else if self.see("Extern") {
                 self.next();
                 let a = self.token.value.clone();
-                // skip `=`
-                self.next();
+                self.next(); // skip `=`
+                if !self.see_value("=") {
+                    self.errors += 1;
+                    self.error("invalid syntax", "expected `=`");
+                }
                 self.next();
                 let b = self.token.value.clone();
                 output = format!("{}\n#define __fire_{} {}\n", output, a, b);
