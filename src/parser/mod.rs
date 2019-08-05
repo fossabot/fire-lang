@@ -105,13 +105,22 @@ impl Parser {
             atype = !atype;
         }
 
-        if &self.tokens[self.token_i+1].ttype == "Arrow" {
-            self.next(); // point to arrow
+        println!("{:?}", self.token);
+        self.next(); // point to `->` or `{`
+        if self.see("Arrow") {
             self.next(); // skip `->` and get type
             ftype = self.token.value.clone();
+            self.next();
+            if !self.see_value("{") {
+                self.errors += 1;
+                self.error("invalid syntax", "expected `{` after function definition");
+            }
+        } else if !self.see_value("{") {
+            self.errors += 1;
+            self.error("invalid syntax", "expected `{` after function definition");
         }
 
-        format!("{} {}({})", ftype, fname, args)
+        format!("{} {}({}) {{", ftype, fname, args)
     }
 
     fn variable(&mut self) -> String {

@@ -4,9 +4,9 @@ use logos::Logos;
 enum FireLexer {
     #[end] End,
     #[error] Error,
+    #[token = "->"] Arrow,
     #[token = "\n"] Newline,
     #[regex = "\\{|\\}|\\(|\\)|\\[|\\]|\\+|-|\\*|/|%|\\.\\.\\.|\\.|,|<|>|;"] Literals,
-    #[regex = "->"] Arrow,
     #[regex = "\\d+"] Int,
     #[regex = "\"(\\\\\"|[^\"]|\\\\.)*\""] String,
     #[regex = "[_a-zA-Z]([_a-zA-Z0-9]|::|\\.)*"] Name,
