@@ -110,8 +110,11 @@ impl Parser {
             self.next(); // skip `->` and get type
             ftype = self.token.value.clone();
         }
-
-        format!("{} {}({})", ftype, fname, args)
+        if extern_function {
+            format!("#define __fire_{1} {1}\n{0} {1}({2})", ftype, fname, args)
+        } else {
+            format!("{} {}({})", ftype, fname, args)
+        }
     }
 
     fn variable(&mut self) -> String {
@@ -193,6 +196,10 @@ impl Parser {
                 output = format!("{}\n{}", output, self.variable());
             }
 
+            else if self.see("Name") {
+                output = format!("{}\n__fire_{}", output, self.token.value);
+            }
+
             else if self.see("Newline") {
                 let line = &self.lines[self.line];
                 self.line += 1;
@@ -219,5 +226,5 @@ pub fn compile(filename: String) -> String {
     if parser.errors != 0 {
         exit(parser.errors as i32);
     }
-    output
+    format!("{}\nint main(void) {{__fire_main();}}", output)
 }
