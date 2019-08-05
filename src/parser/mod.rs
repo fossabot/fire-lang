@@ -55,6 +55,30 @@ impl Parser {
          * `RetType __fire_FuncName(Type arg1, Type arg2)`
          */
         self.next();
+
+        let mut template = String::new();
+
+        // template: `fn<T>`
+        if self.see_value("<") {
+            self.next(); // skip `<`
+            template = "template<typename".to_string();
+            while !self.see_value(">") {
+                if self.see("Name") {
+                    template = format!("{} __fire_{}", template, self.token.value);
+                } else if self.see_value("...") {
+                    template = format!("{}...", template);
+                } else if self.see_value(",") {
+                    template = format!("{}, typename", template);
+                } else {
+                    self.errors += 1;
+                    self.error("invalid syntax", format!("unexpected token `{}` in function template", self.token.value).as_str());
+                }
+                self.next();
+            }
+            template = format!("{}>", template);
+            self.next(); // skip `>`
+        }
+
         let fname = format!("__fire_{}", self.token.value);
 
         /* after `fn` the function name is required */
@@ -79,14 +103,14 @@ impl Parser {
         let mut args = String::new();
         let mut aname = String::new();
         let mut atype = false;
+        let mut amulti = false;
 
         while !self.see_value(")") {
             self.next();
 
             if self.see_value("...") {
-                args = format!("{}...", args);
-                self.next();
-                break;
+                amulti = true;
+                continue;
             }
 
             if self.see_value(":") || self.see_value(",") {
@@ -97,7 +121,8 @@ impl Parser {
             }
 
             if atype {
-                args = format!("{}__fire_{} {}", args, self.token.value, aname);
+                args = format!("{}__fire_{}{} {}", args, self.token.value, if amulti { "..." } else { "" }, aname);
+                amulti = false;
             } else {
                 aname = format!("__fire_{}", self.token.value);
             }
@@ -119,7 +144,7 @@ impl Parser {
             self.error("invalid syntax", "expected `{` after function definition");
         }
 
-        format!("{} {}({}) {{", ftype, fname, args)
+        format!("{}\n{} {}({}) {{", template, ftype, fname, args)
     }
 
     fn variable(&mut self) -> String {
