@@ -134,7 +134,7 @@ impl Parser {
          */
         self.next();
         let name = self.token.value.clone();
-        let mut var_type = "auto";
+        let mut var_type = "auto".to_string();
 
         /* after `let` the variable name is required */
         if !self.see("Name") {
@@ -145,13 +145,15 @@ impl Parser {
         self.next();
         if self.see_value(":") {
             self.next();
-            var_type = self.token.value.as_str();
+            var_type = format!("__fire_{}", self.token.value);
 
             /* after `:` the type name is required */
             if !self.see("Name") {
                 self.errors += 1;
                 self.error("invalid syntax", "expected type");
             }
+
+            self.next();
         } else if !self.see_value("=") {
             self.error("invalid syntax", format!("unexpected {:?}", self.token).as_ref());
             self.errors += 1;
@@ -169,22 +171,7 @@ impl Parser {
     }
 
     fn parse(&mut self) -> String {
-        let types: String = vec![
-            "int8_t __fire_i8",
-            "int16_t __fire_i16",
-            "int32_t __fire_i32",
-            "int64_t __fire_i64",
-            "int8_t __fire_u8",
-            "int16_t __fire_u16",
-            "int32_t __fire_u32",
-            "int64_t __fire_u64",
-            "std::string __fire_string"
-        ].iter()
-            .map(|e| format!("typedef {};\n", e))
-            .collect();
-
-        let mut output = format!(
-            "#include <cstdint>\n#include <string>\n{}", types);
+        let mut output = include_str!("template.cc").to_string();
 
         while self.token_i < self.tokens.len() {
             self.next();
@@ -193,33 +180,12 @@ impl Parser {
                 output = format!("{}\n{}", output, self.function());
             }
 
-            else if self.see("Extern") {
-                self.next();
-                let a = self.token.value.clone();
-                self.next(); // skip `=`
-                if !self.see_value("=") {
-                    self.errors += 1;
-                    self.error("invalid syntax", "expected `=`");
-                }
-                self.next();
-                let b = self.token.value.clone();
-                output = format!("{}\n#define __fire_{} {}\n", output, a, b);
-                self.next();
-            }
-
             else if self.see("Let") {
                 output = format!("{}\n{}", output, self.variable());
             }
 
-            else if self.see("Include") {
-                self.next();
-                let a = self.token.value.clone();
-                self.next();
-                let b = self.token.value.clone();
-                self.next();
-                let c = self.token.value.clone();
-                output = format!("{}\n#include {}{}{}\n", output, a, b, c);
-                self.next();
+            else if self.see("Directive") {
+                output = format!("{}\n{}\n", output, self.token.value);
             }
 
             else if self.see("Name") {
