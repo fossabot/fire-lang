@@ -10,7 +10,7 @@ enum FireLexer {
     #[regex = "\\{|\\}|\\(|\\)|\\[|\\]|\\+|-|\\*|/|%|\\.\\.\\.|\\.|,|<|>|;|:"] Literals,
     #[regex = "\\d+"] Int,
     #[regex = "\"(\\\\\"|[^\"]|\\\\.)*\""] String,
-    #[regex = "[_a-zA-Z]([_a-zA-Z0-9]|\\.)*(::|)([_a-zA-Z0-9]|\\.)*"] Name,
+    #[regex = "[_a-zA-Z][_a-zA-Z0-9]*"] Name,
     #[token = "break"] Break,
     #[token = "continue"] Continue,
     #[token = "else"] Else,
