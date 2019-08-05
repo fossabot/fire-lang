@@ -133,13 +133,20 @@ impl Parser {
          * `Type var = ...`
          */
         self.next();
-        let name = self.token.value.clone();
         let mut var_type = "auto".to_string();
+        let mut b_mut = false;
 
-        /* after `let` the variable name is required */
+        if self.see("Mut") {
+            self.next();
+            b_mut = true;
+        }
+
+        let name = self.token.value.clone();
+
+        /* after `let` or `mut` the variable name is required */
         if !self.see("Name") {
             self.errors += 1;
-            self.error("invalid syntax", "expected name");
+            self.error("invalid syntax", format!("expected name got `{}`", self.token.value).as_str());
         }
 
         self.next();
@@ -159,7 +166,7 @@ impl Parser {
             self.errors += 1;
         }
 
-        format!("{} __fire_{}=", var_type, name)
+        format!("{}{} __fire_{}=", if b_mut { "" } else { "const " }, var_type, name)
     }
 
     fn see(&self, s: &str) -> bool {
