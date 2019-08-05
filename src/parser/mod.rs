@@ -170,7 +170,22 @@ impl Parser {
     }
 
     fn parse(&mut self) -> String {
-        let mut output = "".to_string();
+        let types: String = vec![
+            "i8 int8_t",
+            "i16 int16_t",
+            "i32 int32_t",
+            "i64 int64_t",
+            "u8 int8_t",
+            "u16 int16_t",
+            "u32 int32_t",
+            "u64 int64_t",
+            "string std::string"
+        ].iter()
+            .map(|e| format!("#define {}\n", e))
+            .collect();
+
+        let mut output = format!(
+            "#include <cstdint>\n{}", types);
 
         while self.token_i < self.tokens.len() {
             self.next();
