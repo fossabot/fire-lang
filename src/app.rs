@@ -2,7 +2,8 @@ use clap::{App, Arg};
 
 pub struct Args {
     pub file: String,
-    pub output: String
+    pub output: String,
+    pub run: bool
 }
 
 impl Args {
@@ -28,6 +29,7 @@ impl Args {
         Args {
             file: matches.value_of("FILE").unwrap().to_string(),
             output: matches.value_of("OUTPUT").unwrap_or("a").to_string(),
+            run: matches.is_present("RUN")
         }
     }
 }

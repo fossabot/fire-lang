@@ -33,12 +33,14 @@ fn main() {
         Err(e) => panic!("{}", e)
     }
 
-    let filename = format!("./{}", args.output);
-    match Command::new(&filename).spawn() {
-        Ok(mut cmd) => {
-            cmd.wait().unwrap();
-            remove_file(filename).unwrap();
-        }
-        _ => ()
-    };
+    if args.run {
+        let filename = format!("./{}", args.output);
+        match Command::new(&filename).spawn() {
+            Ok(mut cmd) => {
+                cmd.wait().unwrap();
+                remove_file(filename).unwrap();
+            }
+            _ => ()
+        };
+    }
 }
