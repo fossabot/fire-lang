@@ -97,7 +97,7 @@ impl Parser {
             }
 
             if atype {
-                args = format!("{}{} {}", args, self.token.value, aname);
+                args = format!("{}__fire_{} {}", args, self.token.value, aname);
             } else {
                 aname = format!("__fire_{}", self.token.value);
             }
@@ -105,11 +105,10 @@ impl Parser {
             atype = !atype;
         }
 
-        println!("{:?}", self.token);
         self.next(); // point to `->` or `{`
         if self.see("Arrow") {
             self.next(); // skip `->` and get type
-            ftype = self.token.value.clone();
+            ftype = format!("__fire_{}", self.token.value);
             self.next();
             if !self.see_value("{") {
                 self.errors += 1;
@@ -171,21 +170,21 @@ impl Parser {
 
     fn parse(&mut self) -> String {
         let types: String = vec![
-            "i8 int8_t",
-            "i16 int16_t",
-            "i32 int32_t",
-            "i64 int64_t",
-            "u8 int8_t",
-            "u16 int16_t",
-            "u32 int32_t",
-            "u64 int64_t",
-            "string std::string"
+            "int8_t __fire_i8",
+            "int16_t __fire_i16",
+            "int32_t __fire_i32",
+            "int64_t __fire_i64",
+            "int8_t __fire_u8",
+            "int16_t __fire_u16",
+            "int32_t __fire_u32",
+            "int64_t __fire_u64",
+            "std::string __fire_string"
         ].iter()
-            .map(|e| format!("#define {}\n", e))
+            .map(|e| format!("typedef {};\n", e))
             .collect();
 
         let mut output = format!(
-            "#include <cstdint>\n{}", types);
+            "#include <cstdint>\n#include <string>\n{}", types);
 
         while self.token_i < self.tokens.len() {
             self.next();
@@ -225,6 +224,10 @@ impl Parser {
 
             else if self.see("Name") {
                 output = format!("{}__fire_{}", output, self.token.value);
+            }
+
+            else if self.see("Return") {
+                output = format!("{}{} ", output, self.token.value);
             }
 
             else if self.see("String") {
