@@ -20,7 +20,7 @@ fn main() {
             let cmd = Command::new("cc")
                 .arg(&filename)
                 .arg("-o")
-                .arg(args.output)
+                .arg(&args.output)
                 .output()
                 .expect("failed to execute process");
 
@@ -30,4 +30,12 @@ fn main() {
         },
         Err(e) => panic!("{}", e)
     }
+
+    let filename = format!("./{}", args.output);
+    let mut cmd = Command::new(&filename)
+        .spawn()
+        .expect("failed to execute process");
+
+    cmd.wait().unwrap();
+    remove_file(filename).unwrap();
 }

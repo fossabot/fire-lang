@@ -20,6 +20,9 @@ impl Args {
                 .long("--output")
                 .takes_value(true)
                 .help("Output path"))
+            .arg(Arg::with_name("RUN")
+                .long("--run")
+                .help("Run program after compilation and delete binary"))
             .get_matches();
 
         Args {
