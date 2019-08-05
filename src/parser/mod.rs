@@ -48,14 +48,14 @@ impl Parser {
         };
     }
 
-    fn function(&mut self, extern_function: bool) -> String {
+    fn function(&mut self) -> String {
         /* Convert fire function to C
          * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
          * =>
          * `RetType __fire_FuncName(Type arg1, Type arg2)`
          */
         self.next();
-        let fname = format!("{}{}", if !extern_function { "__fire_" } else { "" }, self.token.value);
+        let fname = format!("__fire_{}", self.token.value);
 
         /* after `fn` the function name is required */
         if !self.see("Name") {
@@ -110,11 +110,8 @@ impl Parser {
             self.next(); // skip `->` and get type
             ftype = self.token.value.clone();
         }
-        if extern_function {
-            format!("#define __fire_{1} {1}\n{0} {1}({2})", ftype, fname, args)
-        } else {
-            format!("{} {}({})", ftype, fname, args)
-        }
+
+        format!("{} {}({})", ftype, fname, args)
     }
 
     fn variable(&mut self) -> String {
@@ -129,7 +126,7 @@ impl Parser {
          */
         self.next();
         let name = self.token.value.clone();
-        let mut var_type = None;
+        let mut var_type = "auto";
 
         /* after `let` the variable name is required */
         if !self.see("Name") {
@@ -140,7 +137,7 @@ impl Parser {
         self.next();
         if self.see_value(":") {
             self.next();
-            var_type = Some(self.token.value.clone());
+            var_type = self.token.value.as_str();
 
             /* after `:` the type name is required */
             if !self.see("Name") {
@@ -152,21 +149,7 @@ impl Parser {
             self.errors += 1;
         }
 
-        /* if type is not specified, we must deduce it from the value */
-        if var_type == None {
-            let token = &self.tokens[self.token_i];
-            self.token_i -= 1;
-            if token.ttype == "Int".to_string() {
-                var_type = Some("long".to_string());
-            } else if token.ttype == "String".to_string() {
-                var_type = Some("char*".to_string());
-            } else {
-                self.error("unrecognized type", format!("cannot determine a type of variable `{}`", name).as_ref());
-                self.errors += 1;
-            }
-        }
-
-        format!("{} __fire_{}", var_type.unwrap_or("_".to_string()), name)
+        format!("{} __fire_{}=", var_type, name)
     }
 
     fn see(&self, s: &str) -> bool {
@@ -178,26 +161,47 @@ impl Parser {
     }
 
     fn parse(&mut self) -> String {
-        let mut output = "#define c_str const char*".to_string();
+        let mut output = "".to_string();
 
         while self.token_i < self.tokens.len() {
             self.next();
 
             if self.see("Fn") {
-                output = format!("{}\n{}", output, self.function(false));
+                output = format!("{}\n{}", output, self.function());
             }
 
             else if self.see("Extern") {
                 self.next();
-                output = format!("{}\n{}", output, self.function(true));
+                let a = self.token.value.clone();
+                // skip `=`
+                self.next();
+                self.next();
+                let b = self.token.value.clone();
+                output = format!("{}\n#define __fire_{} {}\n", output, a, b);
+                self.next();
             }
 
             else if self.see("Let") {
                 output = format!("{}\n{}", output, self.variable());
             }
 
+            else if self.see("Include") {
+                self.next();
+                let a = self.token.value.clone();
+                self.next();
+                let b = self.token.value.clone();
+                self.next();
+                let c = self.token.value.clone();
+                output = format!("{}\n#include {}{}{}\n", output, a, b, c);
+                self.next();
+            }
+
             else if self.see("Name") {
-                output = format!("{}\n__fire_{}", output, self.token.value);
+                output = format!("{}__fire_{}", output, self.token.value);
+            }
+
+            else if self.see("String") {
+                output = format!("{}std::string({})", output, self.token.value);
             }
 
             else if self.see("Newline") {

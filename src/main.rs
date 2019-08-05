@@ -11,14 +11,16 @@ fn main() {
     let output = parser::compile(args.file.clone());
     println!("{}", output);
 
-    let filename = format!("/tmp/{}.c", args.file.replace("/", "_").replace("\\", "_"));
+    let filename = format!("/tmp/{}.cc", args.file.replace("/", "_").replace("\\", "_"));
 
     match File::create(&filename) {
         Ok(mut file) => {
             file.write(output.as_bytes()).unwrap();
 
-            let cmd = Command::new("cc")
+            let cmd = Command::new("c++")
                 .arg(&filename)
+                .arg("-std=c++17")
+                .arg("-fno-exceptions")
                 .arg("-o")
                 .arg(&args.output)
                 .output()
