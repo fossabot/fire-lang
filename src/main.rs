@@ -34,10 +34,11 @@ fn main() {
     }
 
     let filename = format!("./{}", args.output);
-    let mut cmd = Command::new(&filename)
-        .spawn()
-        .expect("failed to execute process");
-
-    cmd.wait().unwrap();
-    remove_file(filename).unwrap();
+    match Command::new(&filename).spawn() {
+        Ok(mut cmd) => {
+            cmd.wait().unwrap();
+            remove_file(filename).unwrap();
+        }
+        _ => ()
+    };
 }
