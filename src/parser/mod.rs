@@ -139,12 +139,13 @@ impl Parser {
                 self.errors += 1;
                 self.error("invalid syntax", "expected `{` after function definition");
             }
-        } else if !self.see_value("{") {
+        } else if !self.see_value("{") && !self.see_value(";") {
             self.errors += 1;
-            self.error("invalid syntax", "expected `{` after function definition");
+            self.error("invalid syntax", "expected `{` or `;` after function definition");
         }
 
-        format!("{}\n{} {}({}) {{", template, ftype, fname, args)
+        self.token_i -= 1;
+        format!("{}\n{} {}({})", template, ftype, fname, args)
     }
 
     fn variable(&mut self) -> String {
