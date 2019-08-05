@@ -172,9 +172,15 @@ impl Parser {
 
     fn parse(&mut self) -> String {
         let mut output = include_str!("template.cc").to_string();
+        let mut close = false;
 
         while self.token_i < self.tokens.len() {
             self.next();
+
+            if close && self.see_value("{") {
+                output = format!("{})", output);
+                close = false;
+            }
 
             if self.see("Fn") {
                 output = format!("{}\n{}", output, self.function());
@@ -192,8 +198,17 @@ impl Parser {
                 output = format!("{}__fire_{}", output, self.token.value);
             }
 
+            else if self.see("Loop") {
+                output = format!("{}while(true)", output);
+            }
+
             else if self.see("Return") {
                 output = format!("{}{} ", output, self.token.value);
+            }
+
+            else if self.see("If") || self.see("While") {
+                output = format!("{}{}(", output, self.token.value);
+                close = true;
             }
 
             else if self.see("String") {
