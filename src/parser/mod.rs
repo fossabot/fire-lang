@@ -190,14 +190,20 @@ impl Parser {
         if self.see_value(":") {
             self.next();
             var_type = format!("__fire_{}", self.token.value);
-
-            /* after `:` the type name is required */
             if !self.see("Name") {
                 self.errors += 1;
-                self.error("invalid syntax", "expected type");
+                self.error("invalid syntax", format!("expected type got `{}`", self.token.value).as_str());
             }
-
             self.next();
+            while !self.see_value("=") {
+                if self.see("Name") {
+                    var_type = format!("{} __fire_{}", var_type, self.token.value);
+                }
+                else {
+                    var_type = format!("{}{}", var_type, self.token.value);
+                }
+                self.next();
+            }
         } else if !self.see_value("=") {
             self.error("invalid syntax", format!("unexpected {:?}", self.token).as_ref());
             self.errors += 1;
