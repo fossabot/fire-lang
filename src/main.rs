@@ -23,6 +23,8 @@ fn main() {
         .arg(&filename)
         .arg("-std=c++17")
         .arg("-fno-exceptions")
+        .arg("-fno-rtti")
+        .arg("-Ofast")
         .arg("-o")
         .arg(&args.output)
         .output()
