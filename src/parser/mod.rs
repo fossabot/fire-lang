@@ -221,7 +221,7 @@ impl Parser {
     }
 
     fn parse(&mut self) -> String {
-        let mut output = include_str!("template.cc").to_string();
+        let mut output = include_str!("../builtins.cc").to_string();
         let mut close = false;
 
         while self.token_i < self.tokens.len() {
