@@ -59,6 +59,89 @@ impl Parser {
         };
     }
 
+    fn restore_pointer(&mut self, ptr: usize) -> bool {
+        // restore token pointer and token
+        self.token_i = ptr - 1;
+        self.next();
+        false
+    }
+
+    /* Returns true if function is recursive and can be optimized */
+    fn is_recursive(&mut self) -> bool {
+        let ptr = self.token_i;
+
+        // false if no name after `fn`
+        if !self.see("Name") {
+            return self.restore_pointer(ptr);
+        }
+
+        // get function name (have to check if it will be called)
+        let mut locals = vec![self.token.value.clone()];
+        let mut names = vec![];
+
+        // skip function name
+        self.next();
+
+        // load arguments
+        while !self.see_value(")") {
+            if self.see("Name") {
+                locals.push(self.token.value.clone())
+            }
+            self.next();
+        }
+
+        // skip `)`
+        self.next();
+
+        // get return type
+        if self.see_value("->") {
+            while !self.see_value("{") {
+                self.next();
+            }
+        } else {
+            // function is void
+            return self.restore_pointer(ptr);
+        }
+
+        // skip `{`
+        self.next();
+
+        let mut depth = 1;
+
+        while depth >= 1 {
+            self.next();
+
+            if self.see_value("{") {
+                depth += 1;
+            }
+
+            if self.see_value("}") {
+                depth -= 1;
+            }
+
+            if self.see("Let") {
+                self.next();
+                if self.see("Mut") {
+                    self.next();
+                }
+                locals.push(self.token.value.clone());
+            }
+
+            if self.see("Name") {
+                names.push(self.token.value.clone());
+            }
+        }
+
+        for e in names {
+            if !locals.contains(&e) {
+                return self.restore_pointer(ptr);
+            }
+        }
+
+        // restore_pointer always returns false
+        !self.restore_pointer(ptr)
+    }
+
     fn function(&mut self) -> String {
         /* Convert fire function to C
          * `fn FuncName(arg1: Type, arg2: Type) -> RetType`
@@ -66,6 +149,7 @@ impl Parser {
          * `RetType __fire_FuncName(Type arg1, Type arg2)`
          */
         self.next();
+        let _recursive = self.is_recursive();
 
         let mut template = String::new();
 
