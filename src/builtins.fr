@@ -1,0 +1,24 @@
+#define __fire_cout std::cout
+
+fn<T> println(t: T) {
+    cout << t << "\n";
+}
+
+fn<T, ...A> println(t: T, a: ...A) {
+    cout << t << " ";
+    println(a...);
+}
+
+fn<T> print(t: T) {
+    cout << t;
+}
+
+fn<T, ...A> print(t: T, a: ...A) {
+    cout << t << " ";
+    print(a...);
+}
+
+#undef __fire_cout
+#define __fire_call_main() void __fire_main(); int main(void) {__fire_main();}
+call_main()
+#undef __fire_call_main
