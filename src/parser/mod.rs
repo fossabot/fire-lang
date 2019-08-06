@@ -6,6 +6,7 @@ use std::process::exit;
 
 struct Parser {
     filename: String,
+    src: String,
     lines: Vec<String>,
     tokens: Vec<Token>,
     token: Token,
@@ -17,7 +18,7 @@ struct Parser {
 impl Parser {
     fn new(filename: String) -> Self {
         let src = match read_to_string(&filename) {
-            Err(e) => panic!("{}", e),
+            Err(_) => "".to_string(),
             Ok(s) => s,
         };
 
@@ -28,7 +29,8 @@ impl Parser {
         Parser {
             lines,
             filename,
-            tokens: lex(src),
+            tokens: lex(src.clone()),
+            src,
             token: Token {
                 ttype: "".to_string(),
                 value: "".to_string()
@@ -37,6 +39,15 @@ impl Parser {
             errors: 0,
             line: 0
         }
+    }
+
+    fn init(&mut self) {
+        let lines = self.src.lines()
+            .map(|s| s.to_string())
+            .collect();
+
+        self.lines = lines;
+        self.tokens = lex(self.src.clone());
     }
 
     fn next(&mut self) {
@@ -274,5 +285,16 @@ pub fn compile(filename: String) -> String {
     if parser.errors != 0 {
         exit(parser.errors as i32);
     }
-    format!("{}\nint main(void) {{__fire_main();}}", output)
+    output
+}
+
+pub fn compile_string(code: String) -> String {
+    let mut parser = Parser::new("<string>".to_string());
+    parser.src = code;
+    parser.init();
+    let output = parser.parse();
+    if parser.errors != 0 {
+        exit(parser.errors as i32);
+    }
+    output
 }

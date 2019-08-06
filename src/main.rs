@@ -8,30 +8,28 @@ use std::str::from_utf8;
 
 fn main() {
     let args = app::Args::parse();
-    let output = parser::compile(args.file.clone());
-    println!("{}", output);
-
-    let filename = format!("/tmp/{}.cc", args.file.replace("/", "_").replace("\\", "_"));
+    let output = parser::compile(args.file);
+    let builtins = parser::compile_string(include_str!("builtins.fr").to_string());
+    let filename = "/tmp/__fire.cc";
 
     match File::create(&filename) {
         Ok(mut file) => {
-            file.write(output.as_bytes()).unwrap();
-
-            let cmd = Command::new("c++")
-                .arg(&filename)
-                .arg("-std=c++17")
-                .arg("-fno-exceptions")
-                .arg("-o")
-                .arg(&args.output)
-                .output()
-                .expect("failed to execute process");
-
-            println!("{}", from_utf8(&cmd.stderr).unwrap());
-
-            remove_file(filename).unwrap();
+            file.write(format!("{}\n{}", output, builtins).as_bytes()).unwrap();
         },
         Err(e) => panic!("{}", e)
     }
+
+    let cmd = Command::new("c++")
+        .arg(&filename)
+        .arg("-std=c++17")
+        .arg("-fno-exceptions")
+        .arg("-o")
+        .arg(&args.output)
+        .output()
+        .expect("failed to execute process");
+
+    println!("{}", from_utf8(&cmd.stderr).unwrap());
+    remove_file(filename).unwrap();
 
     if args.run {
         let filename = format!("./{}", args.output);
