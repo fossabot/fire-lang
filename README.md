@@ -1,4 +1,4 @@
-🔥 Simple, fast, statically-typed programming language.
+## Hello, world!
 
 ```rust
 fn main() {
