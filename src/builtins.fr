@@ -1,3 +1,23 @@
+#include <iostream>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <map>
+
+#define __fire_i8 int8_t
+#define __fire_u8 uint8_t
+#define __fire_f32 float
+#define __fire_f64 double
+#define __fire_i16 int16_t
+#define __fire_i32 int32_t
+#define __fire_i64 int64_t
+#define __fire_u16 uint16_t
+#define __fire_u32 uint32_t
+#define __fire_u64 uint64_t
+#define __fire_string std::string
+#define __fire_vec std::vector
+#define __fire_map std::map
+
 #define __fire_cout std::cout
 
 fn<T> println(t: T) {
