@@ -3,6 +3,7 @@ mod lexer;
 use lexer::{Token, lex};
 use std::fs::read_to_string;
 use std::process::exit;
+use std::path::Path;
 
 struct Parser {
     filename: String,
@@ -296,6 +297,69 @@ impl Parser {
         format!("{}{} __fire_{}=", if b_mut { "" } else { "const " }, var_type, name)
     }
 
+    fn import(&mut self) -> String {
+        /* Include file in namespaces
+         * Example:
+         * File: ./dir/file.fire
+         * `use dir::file;`
+         * =>
+         * `namespace dir { namespace file { ... } }`
+         */
+        let mut vec = Vec::new();
+        let mut file = String::new();
+        let mut name = true;
+        let mut all = false;
+
+        while !self.see_value(";") {
+            self.next();
+
+            if name {
+                if self.see_value("*") {
+                    all = true;
+                    name = false;
+                    continue;
+                }
+
+                if !self.see("Name") {
+                    self.error("invalid syntax", format!("expected name, got {:?}", self.token).as_ref());
+                    self.errors += 1;
+                }
+
+                file = format!("{}/{}", file, self.token.value);
+                vec.push(self.token.value.clone());
+            }
+            else {
+                if !self.see_value("::") && !self.see_value(";") {
+                    self.error("invalid syntax", format!("expected `::`, got {:?}", self.token).as_ref());
+                    self.errors += 1;
+                }
+            }
+
+            name = !name;
+        }
+
+        let mut path = Path::new(&self.filename).to_owned();
+        path.pop();
+        let path = path.into_os_string().into_string().unwrap();
+        let mut module = compile(format!("{}{}.fire", path, file));
+
+        for ns in &vec {
+            module = format!("namespace __fire_{} {{{}}}", ns, module);
+        }
+
+        if all {
+            module = format!("{}\nusing namespace ", module);
+            for ns in vec {
+                module = format!("{}__fire_{}::", module, ns);
+            }
+
+            module.truncate(module.len() - 2);
+            module = format!("{};", module);
+        }
+
+        module
+    }
+
     fn see(&self, s: &str) -> bool {
         self.token.ttype == s.to_string()
     }
@@ -322,6 +386,10 @@ impl Parser {
 
             else if self.see("Let") {
                 output = format!("{}\n{}", output, self.variable());
+            }
+
+            else if self.see("Use") {
+                output = format!("{}\n{}", output, self.import());
             }
 
             else if self.see("Directive") {
