@@ -14,7 +14,7 @@ fn main() {
 
     match File::create(&filename) {
         Ok(mut file) => {
-            file.write(format!("{}\n{}", output, builtins).as_bytes()).unwrap();
+            file.write(format!("{}\n{}", builtins, output).as_bytes()).unwrap();
         },
         Err(e) => panic!("{}", e)
     }
