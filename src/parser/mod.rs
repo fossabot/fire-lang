@@ -216,7 +216,7 @@ impl Parser {
             }
 
             if atype {
-                args = format!("{}__fire_{}{} {}", args, self.token.value, if amulti { "..." } else { "" }, aname);
+                args = format!("{}const __fire_{}{} {}", args, self.token.value, if amulti { "..." } else { "" }, aname);
                 amulti = false;
             } else {
                 aname = format!("__fire_{}", self.token.value);
