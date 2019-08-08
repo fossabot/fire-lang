@@ -7,7 +7,7 @@ enum FireLexer {
     #[regex = "#.*\n"] Directive,
     #[token = "->"] Arrow,
     #[token = "\n"] Newline,
-    #[regex = "\\{|\\}|\\(|\\)|\\[|\\]|\\+|-|\\*|/|%|\\.\\.\\.|\\.|,|<|>|;|:"] Literals,
+    #[regex = "\\{|\\}|\\(|\\)|\\[|\\]|\\+|-|\\*|/|%|\\.\\.\\.|\\.|,|<|>|;|:|::"] Literals,
     #[regex = "\\d+"] Int,
     #[regex = "\"(\\\\\"|[^\"]|\\\\.)*\""] String,
     #[regex = "[_a-zA-Z][_a-zA-Z0-9]*"] Name,
