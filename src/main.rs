@@ -10,9 +10,8 @@ fn main() {
 
     if args.run {
         let filename = format!("./{}", args.output);
-        Command::new(&filename)
-            .spawn().expect("failed to run")
-            .wait().unwrap();
-        remove_file(filename).unwrap();
+        match Command::new(&filename)
+            .spawn() { Ok(mut cmd) => { cmd.wait().unwrap(); }, _ => () };
+        remove_file(filename).unwrap_or_default();
     }
 }
