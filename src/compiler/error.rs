@@ -21,10 +21,20 @@ pub fn display(cc_output: String, errors: &str) {
             let error = get_error(&toks);
 
             let mut ln_i = 0;
+            let mut now = false;
+
             for cc_line in cc_output.lines() {
                 if ln_i == ln {
+                    now = true;
+                }
+                if now && cc_line.starts_with("//@") {
                     let line: Vec<&str> = cc_line.split("@").collect();
                     let file: Vec<&str> = line[1].split(":").collect();
+
+                    if file[0] == "<string>" {
+                        continue;
+                    }
+
                     let line_number = file[1].to_string();
 
                     let mut empty = String::new();
@@ -61,6 +71,7 @@ pub fn display(cc_output: String, errors: &str) {
                     println!("\x1b[33m {} | \x1b[0m", empty);
                     println!("\x1b[33m {} | \x1b[0m{}", line_number, line[2]);
                     println!("\x1b[33m {} | {}\x1b[0m", empty, pointer);
+                    break;
                 }
                 ln_i += 1;
             }
