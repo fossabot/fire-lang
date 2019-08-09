@@ -44,15 +44,15 @@ pub fn display(cc_output: String, errors: &str) {
                     let note;
                     if cc_msg == "note" {
                         if error.contains("declared immutable here") {
-                            note = "help: make this mutable: `let mut`";
+                            note = "help: make this mutable: `let mut ...`".to_string();
                         } else {
-                            note = "";
+                            note = "".to_string();
                         }
                     } else {
-                        note = "";
+                        note = "".to_string();
                     }
 
-                    if note != "" {
+                    if note != "".to_string() {
                         pointer = format!("{}\x1b[33m^ {}", indent, note);
                     }
 
