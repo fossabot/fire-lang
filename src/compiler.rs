@@ -1,4 +1,6 @@
 pub mod app;
+
+mod error;
 mod parser;
 
 use app::Args;
@@ -12,9 +14,11 @@ pub fn compile(args: &Args) {
     let builtins = parser::compile_string(include_str!("builtins.fr").to_string());
     let filename = "/tmp/__fire.cc";
 
+    let cc_output = format!("{}\n{}", builtins, output);
+
     match File::create(&filename) {
         Ok(mut file) => {
-            file.write(format!("{}\n{}", builtins, output).as_bytes()).unwrap();
+            file.write(cc_output.as_bytes()).unwrap();
         },
         Err(e) => panic!("{}", e)
     }
@@ -30,6 +34,6 @@ pub fn compile(args: &Args) {
         .output()
         .expect("failed to execute process");
 
-    println!("{}", from_utf8(&cmd.stderr).unwrap());
+    error::display(cc_output, from_utf8(&cmd.stderr).unwrap());
     remove_file(filename).unwrap();
 }
