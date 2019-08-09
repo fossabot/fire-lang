@@ -420,7 +420,7 @@ impl Parser {
             else if self.see("Newline") {
                 let line = &self.lines[self.line];
                 self.line += 1;
-                output = format!("{}\n//{}:{}@{}\n", output, self.filename, self.line, line);
+                output = format!("{}\n//@{}:{}@{}\n", output, self.filename, self.line, line);
             }
 
             else {
