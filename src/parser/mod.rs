@@ -409,7 +409,7 @@ impl Parser {
             }
 
             else if self.see("If") || self.see("While") {
-                output = format!("{}{}(", output, self.token.value);
+                output = format!("{} {}(", output, self.token.value);
                 close = true;
             }
 
