@@ -20,6 +20,7 @@ public:
     int __fire_index(char c) const;
     __fire_str __fire_trim() const;
     __fire_str __fire_replace(const __fire_str & to_search, const __fire_str & replace_str);
+    __fire_list<__fire_str> __fire_split(const __fire_str & separator);
     void __fire_upcase(unsigned first, unsigned last);
     void __fire_downcase(unsigned first, unsigned last);
     void __fire_togglecase(unsigned first, unsigned last);
@@ -117,6 +118,26 @@ __fire_str __fire_str::__fire_trim() const {
     str.erase(str.find_last_not_of(' ') + 1);
     return __fire_str(str.c_str());
 }
+
+__fire_list<__fire_str> __fire_str::__fire_split(const __fire_str & separator) {
+    __fire_list<__fire_str> list;
+
+    std::string s = this->get_string();
+    std::string delimiter = separator.get_string();
+
+    size_t pos = 0;
+    std::string token;
+    while ((pos = s.find(delimiter)) != std::string::npos) {
+        token = s.substr(0, pos);
+        list.__fire_push(__fire_str(token.c_str()));
+        s.erase(0, pos + delimiter.length());
+    }
+
+    list.__fire_push(__fire_str(s.c_str()));
+
+    return list;
+}
+
 void __fire_str::__fire_upcase(unsigned first, unsigned last) {
     for (unsigned j = first; j < last; j++)
         if ('a' <= data[j] && data[j] <= 'z')
