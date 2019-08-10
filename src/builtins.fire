@@ -42,3 +42,5 @@ fn<T, ...A> print(t: T, a: ...A) {
 #define __fire_call_main() void __fire_main(); int main(void) {__fire_main();}
 call_main()
 #undef __fire_call_main
+
+//@<builtins>:0@

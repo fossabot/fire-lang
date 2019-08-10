@@ -78,10 +78,12 @@ pub fn display(cc_output: String, errors: &str) -> i32 {
                     }
 
                     println!("{}: \x1b[0;1m{}\x1b[0m", msg, error);
-                    println!("\x1b[33m --> \x1b[37m{}\x1b[0m", line[1]);
-                    println!("\x1b[33m {} | \x1b[0m", empty);
-                    println!("\x1b[33m {} | \x1b[0m{}", line_number, line[2]);
-                    println!("\x1b[33m {} | {}\x1b[0m", empty, pointer);
+                    if line[1] != "<__fire_builtins>:0" {
+                        println!("\x1b[33m --> \x1b[37m{}\x1b[0m", line[1]);
+                        println!("\x1b[33m {} | \x1b[0m", empty);
+                        println!("\x1b[33m {} | \x1b[0m{}", line_number, line[2]);
+                        println!("\x1b[33m {} | {}\x1b[0m", empty, pointer);
+                    }
                     break;
                 }
                 ln_i += 1;
