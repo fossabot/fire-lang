@@ -9,6 +9,7 @@ fn get_error(toks: &Vec<&str>) -> String {
     output.truncate(output.len() - 1);
     output.trim()
         .replace("__fire_", "")
+        .replace("constructor", "ctor")
         .replace("const", "immutable")
 }
 
