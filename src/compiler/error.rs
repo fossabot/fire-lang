@@ -12,7 +12,9 @@ fn get_error(toks: &Vec<&str>) -> String {
         .replace("const", "immutable")
 }
 
-pub fn display(cc_output: String, errors: &str) {
+pub fn display(cc_output: String, errors: &str) -> i32 {
+    let mut error_count: i32 = 0;
+
     for line in errors.lines() {
         let line = line.to_string();
 
@@ -67,6 +69,7 @@ pub fn display(cc_output: String, errors: &str) {
                             note = "".to_string();
                         }
                     } else {
+                        error_count += 1;
                         note = "".to_string();
                     }
 
@@ -85,4 +88,6 @@ pub fn display(cc_output: String, errors: &str) {
             }
         }
     }
+
+    error_count
 }

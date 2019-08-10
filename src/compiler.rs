@@ -4,7 +4,7 @@ mod error;
 mod parser;
 
 use app::Args;
-use std::process::Command;
+use std::process::{Command, exit};
 use std::fs::{File, remove_file, create_dir_all};
 use std::io::Write;
 use std::str::from_utf8;
@@ -44,6 +44,15 @@ pub fn compile(args: &Args) {
 
     let stderr = from_utf8(&cmd.stderr).unwrap();
     let stdout = from_utf8(&cmd.stdout).unwrap();
-    error::display(cc_output, &format!("{}\n{}", stderr, stdout));
+    let error_count = error::display(cc_output, &format!("{}\n{}", stderr, stdout));
     remove_file(filename).unwrap();
+
+    if error_count != 0 {
+        remove_file(if cfg!(windows) {
+            format!("./{}.exe", args.output)
+        } else {
+            format!("./{}", args.output)
+        }).unwrap_or_default();
+        exit(error_count);
+    }
 }
