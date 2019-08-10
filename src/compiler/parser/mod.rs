@@ -235,7 +235,12 @@ impl Parser {
                 self.errors += 1;
                 self.error("invalid syntax", "expected `{` after function definition");
             }
-        } else if !self.see_value("{") && !self.see_value(";") {
+        }
+        while self.see("Newline") {
+            self.next();
+        }
+
+        if !self.see_value("{") && !self.see_value(";") {
             self.errors += 1;
             self.error("invalid syntax", "expected `{` or `;` after function definition");
         }
