@@ -22,7 +22,7 @@ pub fn compile(args: &Args) {
     let path = pathbuf.to_str().unwrap();
     create_dir_all(&path).unwrap();
     let filename = format!("{}/.fire.cc", path);
-    let cc_output = format!("{}\n{}\n{}", include_str!("string.cc"), builtins, output);
+    let cc_output = format!("{}\n{}\n{}\n{}", include_str!("string.cc"), include_str!("list.cc"), builtins, output);
 
     match File::create(&filename) {
         Ok(mut file) => {
