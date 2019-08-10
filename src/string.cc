@@ -29,26 +29,8 @@ public:
     __fire_str & operator = (const __fire_str & s);
     __fire_str & operator += (const __fire_str & s);
     friend __fire_str operator + (const __fire_str & lhs, const __fire_str & rhs);
-    friend __fire_str operator + (const __fire_str & lhs, const char * rhs);
-    friend __fire_str operator + (const char * lhs, const __fire_str & rhs);
     friend bool operator == (const __fire_str & lhs, const __fire_str & rhs);
-    friend bool operator == (const __fire_str & lhs, const char * rhs);
-    friend bool operator == (const char * lhs, const __fire_str & rhs);
-    friend bool operator > (const __fire_str & lhs, const __fire_str & rhs);
-    friend bool operator > (const __fire_str & lhs, const char * rhs);
-    friend bool operator > (const char * lhs, const __fire_str & rhs);
     friend bool operator != (const __fire_str & lhs, const __fire_str & rhs);
-    friend bool operator != (const __fire_str & lhs, const char * rhs);
-    friend bool operator != (const char * lhs, const __fire_str & rhs);
-    friend bool operator < (const __fire_str & lhs, const __fire_str & rhs);
-    friend bool operator < (const __fire_str & lhs, const char * rhs);
-    friend bool operator < (const char * lhs, const __fire_str & rhs);
-    friend bool operator <= (const __fire_str & lhs, const __fire_str & rhs);
-    friend bool operator <= (const __fire_str & lhs, const char * rhs);
-    friend bool operator <= (const char * lhs, const __fire_str & rhs);
-    friend bool operator >= (const __fire_str & lhs, const __fire_str & rhs);
-    friend bool operator >= (const __fire_str & lhs, const char * rhs);
-    friend bool operator >= (const char * lhs, const __fire_str & rhs);
 };
 
 __fire_str::__fire_str() {
@@ -205,14 +187,6 @@ __fire_str operator + (const __fire_str & lhs, const __fire_str & rhs) {
     return __fire_str(lhs) += rhs;
 }
 
-__fire_str operator + (const __fire_str & lhs, const char * rhs) {
-    return __fire_str(lhs) += __fire_str(rhs);
-}
-
-__fire_str operator + (const char * lhs, const __fire_str & rhs) {
-    return __fire_str(lhs) += rhs;
-}
-
 bool operator == (const __fire_str & lhs, const __fire_str & rhs) {
     if (lhs.__fire_len() != rhs.__fire_len())
         return false;
@@ -224,83 +198,6 @@ bool operator == (const __fire_str & lhs, const __fire_str & rhs) {
     return (n == cap);
 }
 
-bool operator == (const __fire_str & lhs, const char * rhs) {
-    return (lhs == __fire_str(rhs));
-}
-
-bool operator == (const char * lhs, const __fire_str & rhs) {
-    return (__fire_str(lhs) == rhs);
-}
-
-bool operator > (const __fire_str & lhs, const __fire_str & rhs) {
-    unsigned cap = (lhs.__fire_len() < rhs.__fire_len()) ? lhs.__fire_len() : rhs.__fire_len();
-    unsigned n = 0;
-    while ((n < cap) && (lhs[n] == rhs[n]))
-        n++;
-    if (n == cap)
-        return (lhs.__fire_len() > rhs.__fire_len());
-
-    if ((('A' <= lhs[n] && lhs[n] <= 'Z') || ('a' <= lhs[n] && lhs[n] <= 'z')) && (('A' <= rhs[n] && rhs[n] <= 'Z') || ('a' <= rhs[n] && rhs[n] <= 'z'))) {
-        char A = (lhs[n] & ~32);
-        char B = (rhs[n] & ~32);
-        if (A != B)
-            return (A > B);
-    }
-    return lhs[n] > rhs[n];
-}
-
-bool operator > (const __fire_str & lhs, const char * rhs) {
-    return (lhs > __fire_str(rhs));
-}
-
-bool operator > (const char * lhs, const __fire_str & rhs) {
-    return (__fire_str(lhs) > rhs);
-}
-
 bool operator != (const __fire_str & lhs, const __fire_str & rhs) {
     return !(lhs == rhs);
-}
-
-bool operator != (const __fire_str & lhs, const char * rhs) {
-    return !(lhs == rhs);
-}
-
-bool operator != (const char * lhs, const __fire_str & rhs) {
-    return !(lhs == rhs);
-}
-
-bool operator < (const __fire_str & lhs, const __fire_str & rhs) {
-    return !(lhs == rhs) && !(lhs > rhs);
-}
-
-bool operator < (const __fire_str & lhs, const char * rhs) {
-    return !(lhs == rhs) && !(lhs > rhs);
-}
-
-bool operator < (const char * lhs, const __fire_str & rhs) {
-    return !(lhs == rhs) && !(lhs > rhs);
-}
-
-bool operator <= (const __fire_str & lhs, const __fire_str & rhs) {
-    return !(lhs > rhs);
-}
-
-bool operator <= (const __fire_str & lhs, const char * rhs) {
-    return !(lhs > rhs);
-}
-
-bool operator <= (const char * lhs, const __fire_str & rhs) {
-    return !(lhs > rhs);
-}
-
-bool operator >= (const __fire_str & lhs, const __fire_str & rhs) {
-    return (lhs == rhs) || (lhs > rhs);
-}
-
-bool operator >= (const __fire_str & lhs, const char * rhs) {
-    return (lhs == rhs) || (lhs > rhs);
-}
-
-bool operator >= (const char * lhs, const __fire_str & rhs) {
-    return (lhs == rhs) || (lhs > rhs);
 }
