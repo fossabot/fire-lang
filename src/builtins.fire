@@ -1,0 +1,44 @@
+#include <iostream>
+#include <cstdint>
+#include <vector>
+#include <map>
+
+#define __fire_i8 int8_t
+#define __fire_u8 uint8_t
+#define __fire_f32 float
+#define __fire_f64 double
+#define __fire_i16 int16_t
+#define __fire_i32 int32_t
+#define __fire_i64 int64_t
+#define __fire_u16 uint16_t
+#define __fire_u32 uint32_t
+#define __fire_u64 uint64_t
+#define __fire_vec std::vector
+#define __fire_map std::map
+
+#define __fire_cout std::cout
+
+fn<T> println(t: T) {
+    cout << t << "\n";
+}
+
+fn<T, ...A> println(t: T, a: ...A) {
+    cout << t << " ";
+    println(a...);
+}
+
+fn<T> print(t: T) {
+    cout << t;
+}
+
+fn<T, ...A> print(t: T, a: ...A) {
+    cout << t << " ";
+    print(a...);
+}
+
+#undef __fire_cout
+#define __fire_call_main() void __fire_main(); int main(void) {__fire_main();}
+call_main()
+#undef __fire_call_main
+
+//@<builtins>:0@

@@ -1,0 +1,10 @@
+[package]
+name = "fire"
+version = "0.1.0"
+authors = ["maviek"]
+edition = "2018"
+
+[dependencies]
+clap = "2.33.0"
+logos = "0.9.7"
+app_dirs = "^1.2.1"
