@@ -14,7 +14,7 @@
 #define __fire_u16 uint16_t
 #define __fire_u32 uint32_t
 #define __fire_u64 uint64_t
-#define __fire_string std::string
+#define __fire_str std::string
 #define __fire_vec std::vector
 #define __fire_map std::map
 
