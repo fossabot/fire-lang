@@ -15,8 +15,16 @@ fn get_error(toks: &Vec<&str>) -> String {
 pub fn display(cc_output: String, errors: &str) {
     for line in errors.lines() {
         let line = line.to_string();
-        if line.starts_with("/tmp/") {
-            let toks: Vec<&str> = line.split(":").collect();
+
+        if (line.contains("error:") ||
+            line.contains("note:") ||
+            line.contains("warning:")) &&
+            line.contains(".fire.cc") {
+
+            let mut toks: Vec<&str> = line.split(":").collect();
+            if toks[0] == "C" && cfg!(windows) {
+                toks.remove(0);
+            }
             let ln: i32 = toks[1].to_string().parse().unwrap();
             let error = get_error(&toks);
 

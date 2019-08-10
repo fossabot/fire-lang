@@ -42,6 +42,8 @@ pub fn compile(args: &Args) {
         .output()
         .expect("failed to execute process");
 
-    error::display(cc_output, from_utf8(&cmd.stderr).unwrap());
+    let stderr = from_utf8(&cmd.stderr).unwrap();
+    let stdout = from_utf8(&cmd.stdout).unwrap();
+    error::display(cc_output, &format!("{}\n{}", stderr, stdout));
     remove_file(filename).unwrap();
 }
