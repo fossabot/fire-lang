@@ -414,7 +414,7 @@ impl Parser {
             }
 
             else if self.see("String") {
-                output = format!("{}std::string({})", output, self.token.value);
+                output = format!("{}__fire_str({})", output, self.token.value);
             }
 
             else if self.see("Newline") {
