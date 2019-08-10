@@ -12,7 +12,11 @@ use std::str::from_utf8;
 pub fn compile(args: &Args) {
     let output = parser::compile(args.file.clone());
     let builtins = parser::compile_string(include_str!("builtins.fr").to_string());
-    let filename = "/tmp/__fire.cc";
+    let filename = if cfg!(windows) {
+        "C:/__fire.cc"
+    } else {
+        "/tmp/__fire.cc"
+    };
 
     let cc_output = format!("{}\n{}", builtins, output);
 

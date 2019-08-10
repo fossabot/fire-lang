@@ -9,7 +9,11 @@ fn main() {
     compiler::compile(&args);
 
     if args.run {
-        let filename = format!("./{}", args.output);
+        let filename = if cfg!(windows) {
+            format!("./{}.exe", args.output)
+        } else {
+            format!("./{}", args.output)
+        };
         match Command::new(&filename)
             .spawn() { Ok(mut cmd) => { cmd.wait().unwrap(); }, _ => () };
         remove_file(filename).unwrap_or_default();
