@@ -5,8 +5,6 @@
 template <typename T>
 class __fire_list {
 public:
-	__fire_list() {};
-	~__fire_list() {}
 	__fire_list operator=(T rhs[]) {
 		vect.insert(vect.being(), rhs, sizeof(rhs) / sizeof(*rhs) ); return *this;
 	}
