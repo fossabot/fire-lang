@@ -17,7 +17,7 @@ const APP_INFO: AppInfo = AppInfo {
 
 pub fn compile(args: &Args) {
     let output = parser::compile(args.file.clone());
-    let builtins = parser::compile_string(include_str!("builtins.fr").to_string());
+    let builtins = parser::compile_string(include_str!("builtins.fire").to_string());
     let pathbuf = get_app_root(AppDataType::UserConfig, &APP_INFO).unwrap();
     let path = pathbuf.to_str().unwrap();
     create_dir_all(&path).unwrap();
