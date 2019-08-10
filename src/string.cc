@@ -18,6 +18,7 @@ public:
     std::string get_string() const;
     unsigned __fire_len() const;
     int __fire_index(char c) const;
+    __fire_str __fire_trim() const;
     __fire_str __fire_replace(const __fire_str & to_search, const __fire_str & replace_str);
     void __fire_upcase(unsigned first, unsigned last);
     void __fire_downcase(unsigned first, unsigned last);
@@ -110,6 +111,12 @@ __fire_str __fire_str::__fire_replace(const __fire_str & to_search, const __fire
     return new_str;
 }
 
+__fire_str __fire_str::__fire_trim() const {
+    std::string str = this->get_string();
+    str.erase(0, str.find_first_not_of(' '));
+    str.erase(str.find_last_not_of(' ') + 1);
+    return __fire_str(str.c_str());
+}
 void __fire_str::__fire_upcase(unsigned first, unsigned last) {
     for (unsigned j = first; j < last; j++)
         if ('a' <= data[j] && data[j] <= 'z')
