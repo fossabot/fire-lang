@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdint>
-#include <vector>
 
 #define __fire_i8 int8_t
 #define __fire_u8 uint8_t
@@ -12,7 +11,6 @@
 #define __fire_u16 uint16_t
 #define __fire_u32 uint32_t
 #define __fire_u64 uint64_t
-#define __fire_vec std::vector
 
 #define __fire_cout std::cout
 
