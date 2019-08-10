@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 class __fire_str {
 private:
@@ -14,8 +15,10 @@ public:
 
     static __fire_str __fire_from(int x);
 
+    std::string get_string() const;
     unsigned __fire_len() const;
     int __fire_index(char c) const;
+    __fire_str __fire_replace(const __fire_str & to_search, const __fire_str & replace_str);
     void __fire_upcase(unsigned first, unsigned last);
     void __fire_downcase(unsigned first, unsigned last);
     void __fire_togglecase(unsigned first, unsigned last);
@@ -102,6 +105,25 @@ int __fire_str::__fire_index(char c) const {
         if (data[j] == c)
             return (int) j;
     return -1;
+}
+
+std::string __fire_str::get_string() const {
+    return std::string(this->data);
+}
+
+void replace(std::string & data, std::string toSearch, std::string replaceStr) {
+    size_t pos = data.find(toSearch);
+    while (pos != std::string::npos) {
+        data.replace(pos, toSearch.size(), replaceStr);
+        pos =data.find(toSearch, pos + replaceStr.size());
+    }
+}
+
+__fire_str __fire_str::__fire_replace(const __fire_str & to_search, const __fire_str & replace_str) {
+    std::string data = std::string(this->data);
+    replace(data, to_search.get_string(), replace_str.get_string());
+    __fire_str new_str = __fire_str(data.c_str());
+    return new_str;
 }
 
 void __fire_str::__fire_upcase(unsigned first, unsigned last) {
