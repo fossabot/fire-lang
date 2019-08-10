@@ -5,19 +5,23 @@ mod parser;
 
 use app::Args;
 use std::process::Command;
-use std::fs::{File, remove_file};
+use std::fs::{File, remove_file, create_dir_all};
 use std::io::Write;
 use std::str::from_utf8;
+use app_dirs::*;
+
+const APP_INFO: AppInfo = AppInfo {
+    name: "fire",
+    author: "maviek"
+};
 
 pub fn compile(args: &Args) {
     let output = parser::compile(args.file.clone());
     let builtins = parser::compile_string(include_str!("builtins.fr").to_string());
-    let filename = if cfg!(windows) {
-        "C:/__fire.cc"
-    } else {
-        "/tmp/__fire.cc"
-    };
-
+    let pathbuf = get_app_root(AppDataType::UserConfig, &APP_INFO).unwrap();
+    let path = pathbuf.to_str().unwrap();
+    create_dir_all(&path).unwrap();
+    let filename = format!("{}/.fire.cc", path);
     let cc_output = format!("{}\n{}", builtins, output);
 
     match File::create(&filename) {
