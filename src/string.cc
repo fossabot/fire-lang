@@ -29,6 +29,8 @@ public:
     __fire_str & operator = (const __fire_str & s);
     __fire_str & operator += (const __fire_str & s);
     friend __fire_str operator + (const __fire_str & lhs, const __fire_str & rhs);
+    friend __fire_str operator * (const __fire_str & lhs, const int & rhs);
+    friend __fire_str operator * (const int & lhs, const __fire_str & rhs);
     friend bool operator == (const __fire_str & lhs, const __fire_str & rhs);
     friend bool operator != (const __fire_str & lhs, const __fire_str & rhs);
 };
@@ -185,6 +187,20 @@ __fire_str & __fire_str::operator += (const __fire_str & s) {
 
 __fire_str operator + (const __fire_str & lhs, const __fire_str & rhs) {
     return __fire_str(lhs) += rhs;
+}
+
+__fire_str operator * (const __fire_str & lhs, const int & rhs) {
+    __fire_str self = __fire_str(lhs);
+
+    for (int i = 1; i < rhs; i++) {
+        self += lhs;
+    }
+
+    return self;
+}
+
+__fire_str operator * (const int & lhs, const __fire_str & rhs) {
+    return rhs * lhs;
 }
 
 bool operator == (const __fire_str & lhs, const __fire_str & rhs) {
