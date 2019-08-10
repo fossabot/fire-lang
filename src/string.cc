@@ -114,22 +114,17 @@ __fire_str __fire_str::__fire_replace(const __fire_str & to_search, const __fire
 
 char * trim_c_str(char * str) {
     char * end;
-    while (*str == ' ') str++;
-
-    if (*str == 0)
-        return str;
-
-    end = str + strlen(str) - 2;
-    while (end > str && *end == ' ') {
-        end--;
-    }
-
+    while(isspace(*str)) str++;
+    if(!*str) return str;
+    end = str + strlen(str) - 1;
+    while(end > str && isspace(*end)) end--;
     end[1] = '\0';
     return str;
 }
 
 __fire_str __fire_str::__fire_trim() const {
     char * c_str = (char *) this->get_string().c_str();
+    c_str[this->__fire_len()] = '\0';
     return __fire_str(trim_c_str(c_str));
 }
 
