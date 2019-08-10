@@ -37,6 +37,7 @@ pub fn compile(args: &Args) {
         .arg("-fno-exceptions")
         .arg("-fno-rtti")
         .arg("-Ofast")
+        .arg("-Wall")
         .arg("-o")
         .arg(&args.output)
         .output()
