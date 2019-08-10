@@ -48,6 +48,9 @@ public:
 		vect.erase(vect.begin()+pos);
 		return ret;
 	}
+	int __fire_len() {
+		return vect.size();
+	}
 	int __fire_index(T item) {
 		typename std::vector<T>::iterator iter;
 		T ret;
