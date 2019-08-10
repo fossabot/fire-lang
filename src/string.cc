@@ -112,11 +112,25 @@ __fire_str __fire_str::__fire_replace(const __fire_str & to_search, const __fire
     return new_str;
 }
 
+char * trim_c_str(char * str) {
+    char * end;
+    while (*str == ' ') str++;
+
+    if (*str == 0)
+        return str;
+
+    end = str + strlen(str) - 2;
+    while (end > str && *end == ' ') {
+        end--;
+    }
+
+    end[1] = '\0';
+    return str;
+}
+
 __fire_str __fire_str::__fire_trim() const {
-    std::string str = this->get_string();
-    str.erase(0, str.find_first_not_of(' '));
-    str.erase(str.find_last_not_of(' ') + 1);
-    return __fire_str(str.c_str());
+    char * c_str = (char *) this->get_string().c_str();
+    return __fire_str(trim_c_str(c_str));
 }
 
 __fire_list<__fire_str> __fire_str::__fire_split(const __fire_str & separator) {
