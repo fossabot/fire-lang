@@ -1,0 +1,7 @@
+#include <cstdio>
+
+fn read_to_str(filename: str) -> str {
+    #define __fire_read(filename) {FILE *f = fopen(filename.get_string().c_str(), "rt");assert(f);fseek(f, 0, SEEK_END);long length = ftell(f);fseek(f, 0, SEEK_SET);char *buffer = (char *) malloc(length + 1);buffer[length] = '\0';fread(buffer, 1, length, f);fclose(f);return __fire_str(buffer);}
+    read(filename);
+    #undef __fire_read
+}
