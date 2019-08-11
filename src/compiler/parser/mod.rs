@@ -18,10 +18,12 @@ struct Parser {
 
 impl Parser {
     fn new(filename: String) -> Self {
-        let src = match read_to_string(&filename) {
-            Err(_) => "".to_string(),
-            Ok(s) => s,
-        };
+        let src;
+        if filename != "<string>".to_string() {
+            src = read_to_string(&filename).unwrap();
+        } else {
+            src = "".to_string();
+        }
 
         let lines = src.lines()
             .map(|s| s.to_string())
@@ -345,12 +347,16 @@ impl Parser {
 
         let mut path = Path::new(&self.filename).to_owned();
         path.pop();
-        let path = path.into_os_string().into_string().unwrap();
-        let mut module = compile(format!("{}{}.fire", path, file));
-
-        for ns in &vec {
-            module = format!("namespace __fire_{} {{{}}}", ns, module);
+        let str_path = format!("{}{}.fire", path.into_os_string().into_string().unwrap(), file);
+        let path = Path::new(&str_path);
+        let mut module;
+        if path.exists() {
+            module = compile(str_path);
+        } else {
+            module = compile(format!("/usr/local/lib/fire/include/{}.fire", file));
         }
+
+        module = format!("namespace __fire_{} {{{}}}", vec.pop().unwrap(), module);
 
         if all {
             module = format!("{}\nusing namespace ", module);
